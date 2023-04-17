@@ -37,19 +37,30 @@ function _sum(a: number, b: number): number {
     return a + b;
 }
 
-
-
 /*
     String
 */
+
+let _name: string = 'Andrea'
+let surname = "Occhipinti"
+let string: string = `My full name is ${_name} ${surname}`
 
 /*
     Number
 */
 
+let num1: number = 8
+let num2 = 6
+let __sum = num1 + num2
+
 /*
     Boolean
 */
+
+let bool = false
+let _bool = false
+let ___bool: boolean
+___bool = (bool === _bool) ? true : false
 
 /*
     Object
