@@ -63,8 +63,101 @@ let ___bool: boolean
 ___bool = (bool === _bool) ? true : false
 
 /*
+    Functions
+*/
+
+// Definizione di una funzione che accetta un oggetto con tre proprietà
+function getData(data: {id: number, username: string, password: string}) {
+    console.log(data.id, data.username)
+}
+
+// Definizione di un oggetto "data" con tre proprietà
+const data = {id:1, username:'bonobo', password:''}
+
+// Chiamata alla funzione "getData" passando l'oggetto "data" come argomento
+getData(data)
+
+/*
     Object
 */
+
+// Definizione di un oggetto "person1" con due proprietà
+const person1 = {
+    name: "Pietro",
+    surname: "Rossi"
+}
+
+// Non da errore, perché person1 è un oggetto con proprietà "name" e "surname"
+person1.name
+
+/*  Dichiarazione di un oggetto "person2" di tipo generico "object" (significa che il contenuto dell'oggetto 
+    può essere qualsiasi tipo di oggetto non primitivo, inclusi gli array, gli oggetti letterali e 
+    gli oggetti istanziati dalle classi) 
+*/
+let person2: object = {
+    name: "Luca",
+    surname: "Rossi"
+}
+
+// Dichiarazione di un oggetto "person3" di tipo "{}" o "Object" (rappresenta l'oggetto globale JavaScript)
+let person3: {} = {
+    name: "Giovanni",
+    surname: "Rossi"
+}
+
+/*  Il tipo di oggetto vuoto "object" o "{}" indica un oggetto senza proprietà. 
+    Quando si definisce un oggetto con questo tipo, TypeScript non riconosce alcuna proprietà su di esso. 
+    Ciò significa che l'oggetto potrebbe contenere qualsiasi tipo di valore, 
+    ma TypeScript non avrà alcuna informazione sulle proprietà specifiche dell'oggetto. 
+    Quindi, se si cerca di accedere a una proprietà specifica come "surname" su un oggetto di tipo "{}", 
+    TypeScript restituirà un errore poiché non è in grado di riconoscere quella proprietà. 
+    Per risolvere questo errore, è possibile specificare le proprietà dell'oggetto in fase di dichiarazione 
+    oppure utilizzare un tipo di oggetto più specifico che definisce le proprietà richieste. 
+*/
+
+/*  In questo caso, person2 è di tipo "object", che non ha nessuna proprietà specifica definita al suo interno,
+    quindi TypeScript non riconosce la proprietà "name"
+*/
+// person2.name
+
+// In questo caso, person3 è di tipo "{}", quindi TypeScript non riconosce la proprietà "surname"
+// person3.surname
+
+// Dichiarazione di un oggetto "person" con proprietà nidificate
+let person: {
+    name: string,
+    surname: string,
+    age: number,
+    address: {
+        street: string,
+        number: number,
+        cap: string,
+        city: string
+    }
+}
+
+// Assegnazione di un valore all'oggetto "person"
+person = {
+    name: "Paolo",
+    surname: "Rossi",
+    age: 30,
+    // In questo caso, l'oggetto "address" deve contenere le proprietà "street", "number", "cap" e "city"
+    address: {
+        street: "Via Cavour",
+        number: 87,
+        cap: '00100',
+        city: 'Rome'
+    }
+    // address: { // // Questo da errore perchè mancano le proprietà
+    //     street: "Via Cavour",
+    //     number: 87,
+    // }
+    //address: "Via Cavour 87, 00100, Rome" // Questo da errore perchè il tipo è diverso
+}
+
+
+
+
 
 /*
     Array
