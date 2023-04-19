@@ -228,17 +228,128 @@ const game = {
     Custom type
 */
 
+// Definiamo il tipo Person, che contiene informazioni su nome, cognome, età e indirizzo
+type Person = {
+    name: string,
+    surname: string,
+    age: number,
+    address: {
+    street: string,
+    number: number,
+    cap: string,
+    city: string
+    }
+}
+
+// Creiamo un oggetto di tipo Person con informazioni di esempio
+let __person: Person = {
+name: 'Mario',
+surname: 'Rossi',
+age: 42,
+address: {
+        street: 'Via del Corso',
+        number: 11,
+        cap: '00100',
+        city: 'Roma'
+    }
+}
+
+// Definiamo una funzione che stampa l'indirizzo di una persona
+function getPersonAddress(person: Person) {
+console.log(
+        person.address.street,
+        ' ',person.address.number,
+        ', ',person.address.cap,
+        ', ',person.address.city,
+    )
+}
+
 /*
     Enum
 */
+
+// Definiamo l'enumerazione PizzaToppings per i vari ingredienti della pizza
+enum PizzaToppings {
+    Pepperoni = "pepperoni",
+    Mushroom = "mushroom",
+    Pineapple = "pineapple",
+}
+    
+// Definiamo l'enumerazione weekDays per i giorni della settimana
+enum weekDays {
+Monday = 1,
+Tuesday,
+Wednesday,
+Thursday,
+Friday,
+Saturday,
+Sunday,
+}
+    
+// Creiamo una variabile di tipo weekDays e la inizializziamo a Tuesday
+let day: weekDays = weekDays.Tuesday;
+console.log(day); // Output: 2
+
+
+/* if (day === weekDays.Saturday || day === weekDays.Sunday ) { /* Questo darebbe errore perché i valori di day e weekDays.Saturday/Sunday 
+appartengono a tipi differenti: day è un valore di tipo weekDays mentre weekDays.Saturday/Sunday sono stringhe. Per risolvere il problema, 
+possiamo specificare il tipo di enumerazione in entrambi i confronti. Possiamo fare ciò usando l'operatore "as" per forzare TypeScript a 
+considerare day e weekDays.Saturday/Sunday come valori di tipo weekDays: */
+if (day === weekDays.Saturday as weekDays || day === weekDays.Sunday as weekDays) {
+    console.log("È il weekend! Mangiamo la pizza con " + PizzaToppings.Pepperoni + " e " + PizzaToppings.Pineapple);
+} else {
+    console.log("Spiacente, niente pizza oggi.");
+}
+  
+/*  Ci sono diverse soluzioni per risolvere il problema
+
+    * Verificare se si stanno confrontando valori appartenenti ad un tipo di enumerazione e assicurarsi 
+    che siano dello stesso tipo specificando il tipo di enumerazione in entrambi i confronti.
+        
+        Ad esempio: if (day === weekDays.Saturday as weekDays || day === weekDays.Sunday as weekDays)
+
+    * Se si confrontano due variabili di tipo diverso, come una stringa e un numero, 
+    è possibile effettuare una conversione di tipo esplicita per entrambi i valori per 
+    assicurarsi che siano confrontabili tra loro.
+        
+        Ad esempio: if (Number(day) === weekDays.Saturday || Number(day) === weekDays.Sunday)
+
+    * Se si sta confrontando una variabile con un valore noto, è possibile utilizzare un'array 
+    contenente tutti i possibili valori da confrontare, usando il metodo includes() per verificare 
+    se il valore è presente nell'array.
+
+        Ad esempio: if ([weekDays.Saturday, weekDays.Sunday].includes(day))
+
+    *Se si vuole escludere il controllo del compilatore TypeScript, è possibile utilizzare l'operatore 
+    as unknown as per forzare il compilatore a considerare la variabile come un tipo differente, 
+    ma è una soluzione meno sicura e non consigliata, in quanto può portare a problemi di runtime.
+
+        Ad esempio: if (day as unknown as number === weekDays.Saturday || day as unknown as number === weekDays.Sunday)
+*/ 
 
 /*
     Any
 */
 
+// Creiamo una variabile di tipo any che può contenere qualsiasi tipo di valore
+let _any: any = 5;
+_any = "test"; // Possiamo assegnare un valore di tipo stringa alla variabile
+
+// Creiamo un array di tipo any che può contenere qualsiasi tipo di valore
+let _anyArr: any[] = ["", 3];
+
+// Creiamo una tupla di tipo any che può contenere qualsiasi tipo di valore
+let _tuple: [any, number] = [true, 4];
+
 /*
     Union
 */
+
+// Creiamo una variabile di tipo union che può contenere un valore di tipo number o stringa
+let union: number | string = 5;
+
+// Creiamo un array di tipo union che può contenere un array di tipo any o un array di tipo stringa
+let _union: any[] | string[] = ['', ''];
 
 /*
     Alias
