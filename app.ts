@@ -63,21 +63,6 @@ let ___bool: boolean
 ___bool = (bool === _bool) ? true : false
 
 /*
-    Functions
-*/
-
-// Definizione di una funzione che accetta un oggetto con tre proprietà
-function getData(data: {id: number, username: string, password: string}) {
-    console.log(data.id, data.username)
-}
-
-// Definizione di un oggetto "data" con tre proprietà
-const data = {id:1, username:'bonobo', password:''}
-
-// Chiamata alla funzione "getData" passando l'oggetto "data" come argomento
-getData(data)
-
-/*
     Object
 */
 
@@ -277,13 +262,13 @@ enum PizzaToppings {
     
 // Definiamo l'enumerazione weekDays per i giorni della settimana
 enum weekDays {
-Monday = 1,
-Tuesday,
-Wednesday,
-Thursday,
-Friday,
-Saturday,
-Sunday,
+    Monday = 1,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
 }
     
 // Creiamo una variabile di tipo weekDays e la inizializziamo a Tuesday
@@ -328,7 +313,7 @@ if (day === weekDays.Saturday as weekDays || day === weekDays.Sunday as weekDays
 */ 
 
 /*
-    Any
+    Any 
 */
 
 // Creiamo una variabile di tipo any che può contenere qualsiasi tipo di valore
@@ -354,3 +339,65 @@ let _union: any[] | string[] = ['', ''];
 /*
     Alias
 */
+
+
+/*
+    Functions
+*/
+
+// Definizione di una funzione che accetta un oggetto con tre proprietà
+function getData(data: {id: number, username: string, password: string}) {
+    console.log(data.id, data.username)
+}
+
+// Definizione di un oggetto "data" con tre proprietà
+const data = {id:1, username:'bonobo', password:''}
+
+// Chiamata alla funzione "getData" passando l'oggetto "data" come argomento
+getData(data)
+
+// Definizione di una funzione che prende due numeri come argomenti e restituisce la loro somma
+// Nel caso in cui il secondo argomento non sia passato, la funzione assegna di default il valore 0 al parametro "num2".
+// Grazie all'inference di TypeScript, il tipo dell'argomento "num2" viene dedotto automaticamente come number.
+// Il tipo di ritorno della funzione è anch'esso number e viene dedotto dall'inference in base all'operazione di somma effettuata.   
+function addNumbers(num1: number, num2 = 0) {
+    const sum = num1 + num2
+    return sum
+}
+    
+// In questa funzione è possibile specificare un tipo di ritorno diverso dall'inference, in questo caso "string" o "void"
+function _addNumbers(num1: number, num2 = 0): string | void {
+const sumString = (num1 + num2).toString();
+        console.log(sumString);
+    if (typeof sumString === 'string') {
+        return sumString;
+    }
+}
+    
+// In questo esempio si assegna una funzione con tipo generico "Function" ad una variabile "addNumbersFunc"
+// Questo può causare problemi in quanto si potrebbe ri-assegnare "addNumbersFunc" ad una funzione che accetta argomenti di tipi diversi o restituisce tipi diversi
+// In questo caso si assegna la funzione "print" a "addNumbersFunc", ma questa funzione accetta una stringa come argomento, e quindi non è compatibile con "addNumbers"
+let addNumbersFunc: Function = _addNumbers
+function print(string: string) {console.log(string)}
+addNumbersFunc = print
+    
+// Per risolvere il problema del tipo generico "Function", si può specificare il tipo della funzione "addNumbersFunc"
+let _addNumbersFunc: (num1: number, num2: number) => number
+
+// In questa funzione si esegue una operazione di incremento sul parametro "num", e poi si esegue la funzione di callback "cb()"
+function incrementAndExecute(num: number, cb: ()=> void) {
+    const incrementedNum = num + 1;
+    console.log(`Il numero incrementato è ${incrementedNum}`);
+    cb();
+}
+    
+// Questa è la funzione di callback che viene eseguita quando "incrementAndExecute()" viene chiamata
+function callbackFunction() {
+    console.log("La funzione di callback è stata eseguita!");
+}
+    
+// Viene eseguita la funzione "incrementAndExecute()", passando il valore "5" come primo argomento e "callbackFunction" come secondo argomento
+incrementAndExecute(5, callbackFunction);
+  
+
+  
