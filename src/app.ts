@@ -378,8 +378,8 @@ const sumString = (num1 + num2).toString();
 // Questo può causare problemi in quanto si potrebbe ri-assegnare "addNumbersFunc" ad una funzione che accetta argomenti di tipi diversi o restituisce tipi diversi
 // In questo caso si assegna la funzione "print" a "addNumbersFunc", ma questa funzione accetta una stringa come argomento, e quindi non è compatibile con "addNumbers"
 let addNumbersFunc: Function = _addNumbers
-function print(string: string) {console.log(string)}
-addNumbersFunc = print
+function _print(string: string) {console.log(string)}
+addNumbersFunc = _print
     
 // Per risolvere il problema del tipo generico "Function", si può specificare il tipo della funzione "addNumbersFunc"
 let _addNumbersFunc: (num1: number, num2: number) => number
@@ -398,6 +398,45 @@ function callbackFunction() {
     
 // Viene eseguita la funzione "incrementAndExecute()", passando il valore "5" come primo argomento e "callbackFunction" come secondo argomento
 incrementAndExecute(5, callbackFunction);
-  
+
+/*
+    Compilator
+*/
+
+/*
+    tsc app.ts 
+
+    Questo comando esegue la compilazione di un singolo file TypeScript chiamato "app.ts".
+    La compilazione genera un file JavaScript equivalente chiamato "app.js",
+    che può essere eseguito in un ambiente Node.js o in un browser.
+*/
+
+/*
+    tsc app.ts -w / tsc app.ts --watch
+
+    Questi comandi eseguono la compilazione di un file TypeScript chiamato "app.ts",
+    monitorando continuamente il file per eventuali modifiche e ricompilando in automatico il progetto.
+*/
+
+/*
+    tsc --init
+
+    Questo comando inizializza un file di configurazione "tsconfig.json" preimpostato,
+    che può essere successivamente personalizzato per adattarlo alle esigenze del progetto.
+    Il file di configurazione consente di specificare le opzioni di compilazione del progetto TypeScript,
+    ad esempio per includere o escludere specifici file, specificare il livello di strictness del compilatore,
+    specificare l'output directory e molto altro.
+*/
+
+/*
+    tsc -w / tsc --watch
+
+    Questi comandi eseguono la compilazione del progetto TypeScript in modo continuo,
+    monitorando tutti i file del progetto per eventuali modifiche e ricompilando in automatico il progetto
+    senza la necessità di specificare i file di input o le opzioni di compilazione ad ogni singola esecuzione del comando "tsc".
+*/
+
+
+
 
   
