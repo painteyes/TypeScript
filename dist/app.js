@@ -207,11 +207,12 @@ var weekDays;
 // Creiamo una variabile di tipo weekDays e la inizializziamo a Tuesday
 let day = weekDays.Tuesday;
 console.log(day); // Output: 2
-/* if (day === weekDays.Saturday || day === weekDays.Sunday ) { /* Questo darebbe errore perché i valori di day e weekDays.Saturday/Sunday
-appartengono a tipi differenti: day è un valore di tipo weekDays mentre weekDays.Saturday/Sunday sono stringhe. Per risolvere il problema,
-possiamo specificare il tipo di enumerazione in entrambi i confronti. Possiamo fare ciò usando l'operatore "as" per forzare TypeScript a
-considerare day e weekDays.Saturday/Sunday come valori di tipo weekDays: */
-if (day === weekDays.Saturday || day === weekDays.Sunday) {
+/* Questo darebbe errore perché i valori di day e weekDays.Saturday/Sunday appartengono a tipi differenti:
+day è un valore di tipo weekDays mentre weekDays.Saturday/Sunday sono stringhe.
+if (day === weekDays.Saturday || day === weekDays.Sunday ) { */
+if (day === weekDays.Saturday || day === weekDays.Sunday) { /* Per risolvere il problema,
+possiamo specificare il tipo di enumerazione in entrambi i confronti. Possiamo fare ciò usando l'operatore "as"
+per forzare TypeScript a considerare day e weekDays.Saturday/Sunday come valori di tipo weekDays */
     console.log("È il weekend! Mangiamo la pizza con " + PizzaToppings.Pepperoni + " e " + PizzaToppings.Pineapple);
 }
 else {
@@ -273,10 +274,11 @@ function getData(data) {
 const data = { id: 1, username: 'bonobo', password: '' };
 // Chiamata alla funzione "getData" passando l'oggetto "data" come argomento
 getData(data);
-// Definizione di una funzione che prende due numeri come argomenti e restituisce la loro somma
-// Nel caso in cui il secondo argomento non sia passato, la funzione assegna di default il valore 0 al parametro "num2".
-// Grazie all'inference di TypeScript, il tipo dell'argomento "num2" viene dedotto automaticamente come number.
-// Il tipo di ritorno della funzione è anch'esso number e viene dedotto dall'inference in base all'operazione di somma effettuata.   
+/*  Definizione di una funzione che prende due numeri come argomenti e restituisce la loro somma
+    Nel caso in cui il secondo argomento non sia passato, la funzione assegna di default il valore 0 al parametro "num2".
+    Grazie all'inference di TypeScript, il tipo dell'argomento "num2" viene dedotto automaticamente come number.
+    Il tipo di ritorno della funzione è anch'esso number e viene dedotto dall'inference in base all'operazione di somma effettuata.
+*/
 function addNumbers(num1, num2 = 0) {
     const sum = num1 + num2;
     return sum;
@@ -289,14 +291,18 @@ function _addNumbers(num1, num2 = 0) {
         return sumString;
     }
 }
-// In questo esempio si assegna una funzione con tipo generico "Function" ad una variabile "addNumbersFunc"
-// Questo può causare problemi in quanto si potrebbe ri-assegnare "addNumbersFunc" ad una funzione che accetta argomenti di tipi diversi o restituisce tipi diversi
-// In questo caso si assegna la funzione "print" a "addNumbersFunc", ma questa funzione accetta una stringa come argomento, e quindi non è compatibile con "addNumbers"
-let addNumbersFunc = _addNumbers;
+/*  In questo esempio si assegna una funzione con tipo generico "Function" ad una variabile "addNumbersFunc"
+    Questo può causare problemi in quanto si potrebbe ri-assegnare "addNumbersFunc" ad una funzione che accetta argomenti di tipi diversi o restituisce tipi diversi
+    In questo caso si assegna la funzione "print" a "addNumbersFunc", ma questa funzione accetta una stringa come argomento, e quindi non è compatibile con "addNumbers"
+*/
+let _addNumbersFunc = _addNumbers;
 function _print(string) { console.log(string); }
-addNumbersFunc = _print;
+_addNumbersFunc = _print;
 // Per risolvere il problema del tipo generico "Function", si può specificare il tipo della funzione "addNumbersFunc"
-let _addNumbersFunc;
+let addNumbersFunc = function (num1, num2) {
+    return num1 + num2;
+};
+console.log(addNumbersFunc(2, 3)); // Output: 5
 // In questa funzione si esegue una operazione di incremento sul parametro "num", e poi si esegue la funzione di callback "cb()"
 function incrementAndExecute(num, cb) {
     const incrementedNum = num + 1;
@@ -353,12 +359,14 @@ class Gigi {
 }
 // Definizione della classe PersonClass con costruttore per inizializzare le proprietà "name" e "surname"
 class PersonClass {
-    constructor(name, surname) {
+    // Costruttore standard
+    constructor(name, surname, age) {
         this.name = name;
         this.surname = surname;
+        this.age = age;
     }
-    // Metodo introduceMyself che stampa una presentazione della persona corrente
-    introduceMyself() {
+    // Metodo che stampa una presentazione della persona corrente
+    introduce() {
         console.log(`My name's ${this.name}`);
     }
     // Metodo greet che saluta una persona specifica
@@ -367,9 +375,147 @@ class PersonClass {
     }
 }
 // Creazione di un'istanza di PersonClass e inizializzazione delle proprietà name e surname
-const personOne = new PersonClass("Mario", "Rossi");
-const personTwo = new PersonClass("Lucia", "Verdi");
-console.log(personOne.name); // Output: "Mario"
+const personOne = new PersonClass("Mario", "Rossi", 43);
+const personTwo = new PersonClass("Lucia", "Verdi", 29);
+// console.log(personOne.name); // Errore: la proprietà name è privata e non può essere accessibile da fuori la classe
 console.log(personOne.surname); // Output: "Rossi"
-personOne.introduceMyself(); // Output: "My name's Mario"
+personOne.introduce(); // Output: "My name's Mario"
 personTwo.greet(personOne); // Output: "Hello Mario, nice to meet you"
+// La proprietà "name" è privata (private) e pertanto non può essere modificata direttamente dall'esterno della classe PersonClass.
+// personOne.name = 'Richard'; // Errore: l'accesso alla proprietà name non è consentito al di fuori della classe PersonClass.
+// La proprietà "surname" è pubblica (public) e pertanto può essere modificata direttamente dall'esterno della classe PersonClass.
+personOne.surname = 'Benson'; // L'accesso alla proprietà surname è consentito al di fuori della classe PersonClass.
+/* Shortend constructor */
+// Definizione della classe GameClass
+class GameClass {
+    // Costruttore abbreviato che inizializza automaticamente le proprietà private id, usernameOne e usernameTwo.
+    // Il modificatore di accesso "private readonly" definisce le proprietà come di sola lettura, non modificabili dopo la creazione.
+    constructor(id, userOne, userTwo) {
+        this.id = id;
+        this.userOne = userOne;
+        this.userTwo = userTwo;
+    }
+}
+// Istanziazione della classe GameClass con i due oggetti PersonClass creati
+const _game = new GameClass(100, personOne, personTwo);
+/* Inheritance (ereditarietà) */
+// Definizione della classe base `_PersonClass` che rappresenta una persona generica
+class _PersonClass {
+    // Il costruttore accetta il nome e il cognome della persona come argomenti
+    constructor(name, surname) {
+        this.name = name;
+        this.surname = surname;
+    }
+}
+// Definizione della classe `Student` che eredita dalla classe `_PersonClass`.
+class Student extends _PersonClass {
+    /*  Costruttore della classe `Student`.
+      
+        Il costruttore della classe genitore `_PersonClass` viene ereditato, per cui accetta come parametri il nome e il cognome del nuovo studente
+        chiamando il costruttore della classe genitore. Se non vengono specificati dei parametri aggiuntivi non è necessario definire il costruttore,
+        in quanto verrà utilizzato il costruttore della classe genitore `_PersonClass`.
+            
+        Accetta due parametri aggiuntivi:
+        `favoriteSubject`: la materia preferita dello studente (stringa);
+        `votes`: (opzionale) un array di voti dello studente (array di numeri).
+      
+        Il costruttore chiama il costruttore della classe genitore `_PersonClass` utilizzando `super` per inizializzare il nome e il cognome,
+        poi inizializza la proprietà `favoriteSubject` con la materia preferita dello studente e, se fornito, l'array dei voti.
+    */
+    constructor(name, surname, favoriteSubject, votes) {
+        super(name, surname); // Chiama il costruttore della classe genitore per inizializzare il nome e il cognome.
+        this.favoriteSubject = favoriteSubject;
+        this.votes = votes;
+    }
+    // Metodo per cambiare il nome dello studente.
+    changeName(name) {
+        // La proprietà `name` è privata (private) e quindi modificabile solo all'interno della classe `_PersonClass`. 
+        // this.name = 'Giacomo'; // Errore: non è possibile modificare la proprietà `name`. 
+    }
+    // Metodo per cambiare il cognome dello studente.
+    changeSurname(surname) {
+        // La proprietà `surname` è protetta (protected) e quindi modificabile sia all'interno della classe `_PersonClass` che nelle sue sottoclassi.
+        this.surname = 'Poretti';
+    }
+}
+// Creazione di un'istanza della classe `Student` con il nome "Aldo", il cognome "Baglio" e la materia preferita "Storia"
+const _student = new Student('Aldo', 'Baglio', 'Storia');
+// La proprietà "surname" è protetta (protected) e pertanto non può essere modificata direttamente al di fuori della sua classe o delle sue sottoclassi.
+// _student.surname = 'Poretti'; // Errore: l'accesso alla proprietà surname è consentito solo all'interno della classe Student e delle sue sottoclassi.
+/* Static */
+// La classe Employee estende la classe Person e aggiunge una proprietà statica "company" e un metodo statico "createEmployee".
+class Employee extends _PersonClass {
+    static createEmployee(name, surname) {
+        // Il metodo "createEmployee" restituisce una nuova istanza della classe Employee.
+        return new Employee(name, surname);
+    }
+}
+// La proprietà "company" è statica e contiene il nome dell'azienda.
+Employee.company = "OpenAI";
+Employee.createEmployee('Giovanni', 'Storti'); // Restituisce una nuova istanza della classe Employee.
+Employee.company; // Output: "OpenAi"
+/* Abstract */
+/*  Definiamo una classe astratta chiamata "Animal"che rappresenta un animale generico.
+    Poiché "Animal" è una classe astratta, essa non può essere istanziata direttamente.
+    Tuttavia, essa può essere estesa da altre classi che ereditano le proprietà e i metodi di "Animal"
+    e possono anche definire le proprie proprietà e metodi.
+*/
+class Animal {
+    // Definiamo un costruttore che accetta un nome per l'animale
+    constructor(name) {
+        this.name = name;
+    }
+    // Definiamo un metodo che stampa il nome dell'animale seguito dal suo suono
+    makeSound() {
+        console.log(`${this.name} fa ${this.sound()}`);
+    }
+}
+// Definiamo una classe che estende la classe astratta "Animal"
+class Cane extends Animal {
+    // Implementiamo il metodo astratto "sound" specifico per i cani
+    sound() {
+        return "Bau";
+    }
+}
+// Creiamo una nuova istanza della classe "Cane" e chiamiamo il metodo "makeSound"
+const fido = new Cane("Fido");
+fido.makeSound(); // Output: "Fido fa Bau"
+/* Singleton */
+// Definiamo una classe singleton per gestire la connessione al database
+class DatabaseConnection {
+    // Il costruttore è privato, quindi la classe può essere istanziata solo internamente.
+    constructor() {
+        this.connected = false;
+    }
+    // Questo metodo statico restituisce l'unica istanza della classe DatabaseConnection.
+    static getInstance() {
+        // Se non esiste ancora un'istanza, viene creata.
+        if (!DatabaseConnection.instance) {
+            DatabaseConnection.instance = new DatabaseConnection();
+        }
+        // Viene restituita l'istanza esistente.
+        return DatabaseConnection.instance;
+    }
+    connect() {
+        // Effettua la connessione al database, se non già connesso
+        if (!this.connected) {
+            console.log("Connessione al database effettuata");
+            this.connected = true;
+        }
+        else {
+            console.log("Connessione già attiva");
+        }
+    }
+    disconnect() {
+        // Effettua la disconnessione dal database, se connesso
+        if (this.connected) {
+            console.log("Disconnessione dal database effettuata");
+            this.connected = false;
+        }
+        else {
+            console.log("Nessuna connessione attiva");
+        }
+    }
+}
+// Richiama il metodo statico getInstance() della classe DatabaseConnection per ottenere l'unica istanza della classe e connetterci al database
+DatabaseConnection.getInstance().connect();
