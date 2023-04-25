@@ -341,3 +341,35 @@ incrementAndExecute(5, callbackFunction);
     monitorando tutti i file del progetto per eventuali modifiche e ricompilando in automatico il progetto
     senza la necessità di specificare i file di input o le opzioni di compilazione ad ogni singola esecuzione del comando "tsc".
 */
+/*
+    Class
+*/
+// Classe che rappresenta una persona con nome "Gigi"
+class Gigi {
+    constructor() {
+        this.name = 'Gigi';
+        this.surname = '';
+    }
+}
+// Definizione della classe PersonClass con costruttore per inizializzare le proprietà "name" e "surname"
+class PersonClass {
+    constructor(name, surname) {
+        this.name = name;
+        this.surname = surname;
+    }
+    // Metodo introduceMyself che stampa una presentazione della persona corrente
+    introduceMyself() {
+        console.log(`My name's ${this.name}`);
+    }
+    // Metodo greet che saluta una persona specifica
+    greet(person) {
+        console.log(`Hello ${person.name}, nice to meet you`);
+    }
+}
+// Creazione di un'istanza di PersonClass e inizializzazione delle proprietà name e surname
+const personOne = new PersonClass("Mario", "Rossi");
+const personTwo = new PersonClass("Lucia", "Verdi");
+console.log(personOne.name); // Output: "Mario"
+console.log(personOne.surname); // Output: "Rossi"
+personOne.introduceMyself(); // Output: "My name's Mario"
+personTwo.greet(personOne); // Output: "Hello Mario, nice to meet you"
