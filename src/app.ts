@@ -75,7 +75,8 @@ const person1 = {
 // Non da errore, perché person1 è un oggetto con proprietà "name" e "surname"
 person1.name
 
-/*  Dichiarazione di un oggetto "person2" di tipo generico "object", 
+/*  
+    Dichiarazione di un oggetto "person2" di tipo generico "object", 
     il che significa che può contenere qualsiasi tipo di oggetto non primitivo, 
     inclusi gli array, gli oggetti letterali e gli oggetti istanziati dalle classi. 
     Tuttavia, in questo caso, non è specificato il tipo di proprietà che l'oggetto dovrebbe avere, 
@@ -86,7 +87,8 @@ let person2: object = {
     surname: "Rossi"
 }
 
-/*  Dichiarazione di un oggetto "person3" di tipo "{}", che in TypeScript rappresenta l'oggetto vuoto. 
+/*  
+    Dichiarazione di un oggetto "person3" di tipo "{}", che in TypeScript rappresenta l'oggetto vuoto. 
     Questo significa che l'oggetto può contenere qualsiasi tipo di proprietà, 
     ma non è specificato il tipo di alcuna proprietà dell'oggetto. 
     Pertanto, non è possibile accedere alle proprietà dell'oggetto senza specificare il tipo corretto delle proprietà. 
@@ -97,7 +99,8 @@ let person3: {} = {
     surname: "Rossi"
 }
 
-/*  Il tipo di oggetto vuoto "object" o "{}" indica un oggetto senza proprietà definite. 
+/*  
+    Il tipo di oggetto vuoto "object" o "{}" indica un oggetto senza proprietà definite. 
     Quando si definisce un oggetto con questo tipo, TypeScript non riconosce alcuna proprietà su di esso. 
     Ciò significa che l'oggetto potrebbe contenere qualsiasi tipo di valore, 
     ma TypeScript non avrà alcuna informazione sulle proprietà specifiche dell'oggetto. 
@@ -117,7 +120,8 @@ let person3: {} = {
 */
 // person3.surname
 
-/*  Dichiara una variabile _person di tipo oggetto con due proprietà: name e surname, entrambe di tipo stringa. 
+/*  
+    Dichiara una variabile _person di tipo oggetto con due proprietà: name e surname, entrambe di tipo stringa. 
     Viene poi assegnato un valore all'oggetto utilizzando la sintassi degli oggetti letterali, 
     Questo tipo di dichiarazione esplicita il tipo delle proprietà dell'oggetto, 
     in modo da poter accedere alle proprietà in modo sicuro durante la compilazione e prevenire errori a runtime.
@@ -219,10 +223,10 @@ type Person = {
     surname: string,
     age: number,
     address: {
-    street: string,
-    number: number,
-    cap: string,
-    city: string
+        street: string,
+        number: number,
+        cap: string,
+        city: string
     }
 }
 
@@ -276,8 +280,10 @@ let day: weekDays = weekDays.Tuesday;
 console.log(day); // Output: 2
 
 
-/* Questo darebbe errore perché i valori di day e weekDays.Saturday/Sunday appartengono a tipi differenti: 
-day è un valore di tipo weekDays mentre weekDays.Saturday/Sunday sono stringhe.
+/* 
+    Questo darebbe errore perché i valori di day e weekDays.Saturday/Sunday appartengono a tipi differenti: 
+    day è un valore di tipo weekDays mentre weekDays.Saturday/Sunday sono stringhe.
+
 if (day === weekDays.Saturday || day === weekDays.Sunday ) { */
 if (day === weekDays.Saturday as weekDays || day === weekDays.Sunday as weekDays) { /* Per risolvere il problema, 
 possiamo specificare il tipo di enumerazione in entrambi i confronti. Possiamo fare ciò usando l'operatore "as" 
@@ -287,7 +293,8 @@ per forzare TypeScript a considerare day e weekDays.Saturday/Sunday come valori 
     console.log("Spiacente, niente pizza oggi.");
 }
   
-/*  Ci sono diverse soluzioni per risolvere il problema
+/*  
+    Ci sono diverse soluzioni per risolvere il problema
 
     * Verificare se si stanno confrontando valori appartenenti ad un tipo di enumerazione e assicurarsi 
     che siano dello stesso tipo specificando il tipo di enumerazione in entrambi i confronti.
@@ -357,7 +364,8 @@ const data = {id:1, username:'bonobo', password:''}
 // Chiamata alla funzione "getData" passando l'oggetto "data" come argomento
 getData(data)
 
-/*  Definizione di una funzione che prende due numeri come argomenti e restituisce la loro somma
+/*  
+    Definizione di una funzione che prende due numeri come argomenti e restituisce la loro somma
     Nel caso in cui il secondo argomento non sia passato, la funzione assegna di default il valore 0 al parametro "num2".
     Grazie all'inference di TypeScript, il tipo dell'argomento "num2" viene dedotto automaticamente come number.
     Il tipo di ritorno della funzione è anch'esso number e viene dedotto dall'inference in base all'operazione di somma effettuata. 
@@ -376,7 +384,8 @@ function _addNumbers(num1: number, num2 = 0): string | void {
     }
 }
     
-/*  In questo esempio si assegna una funzione con tipo generico "Function" ad una variabile "addNumbersFunc"
+/*  
+    In questo esempio si assegna una funzione con tipo generico "Function" ad una variabile "addNumbersFunc"
     Questo può causare problemi in quanto si potrebbe ri-assegnare "addNumbersFunc" ad una funzione che accetta argomenti di tipi diversi o restituisce tipi diversi
     In questo caso si assegna la funzione "print" a "addNumbersFunc", ma questa funzione accetta una stringa come argomento, e quindi non è compatibile con "addNumbers"
 */
@@ -391,7 +400,7 @@ let addNumbersFunc: (num1: number, num2: number) => number = function(num1: numb
 console.log(addNumbersFunc(2, 3)); // Output: 5
 
 // In questa funzione si esegue una operazione di incremento sul parametro "num", e poi si esegue la funzione di callback "cb()"
-function incrementAndExecute(num: number, cb: ()=> void) {
+function incrementAndExecute(num: number, cb: () => void) {
     const incrementedNum = num + 1;
     console.log(`Il numero incrementato è ${incrementedNum}`);
     cb();
@@ -443,7 +452,19 @@ incrementAndExecute(5, callbackFunction);
 */
 
 /*
-    Class 
+    CLASSI
+
+    - Creazione di una classe con la keyword "class"
+    - Aggiunta di proprietà alla classe
+    - Utilizzo di un costruttore standard con parametri
+    - Uso dei modificatori di accesso "private", "public" e "protected"
+    - Utilizzo del "shortened constructor"
+    - Implementazione dell'ereditarietà tra classi
+    - Uso di proprietà "readonly"
+    - Creazione di una classe figlia con un costruttore predefinito e l'utilizzo della keyword "super"
+    - Definizione di proprietà e metodi "static"
+    - Utilizzo di classi astratte
+    - Implementazione del pattern Singleton
 */
 
 // Classe che rappresenta una persona con nome "Gigi"
@@ -515,7 +536,8 @@ class _PersonClass {
 // Definizione della classe `Student` che eredita dalla classe `_PersonClass`.
 class Student extends _PersonClass {
 
-    /*  Costruttore della classe `Student`.
+    /*  
+        Costruttore della classe `Student`.
       
         Il costruttore della classe genitore `_PersonClass` viene ereditato, per cui accetta come parametri il nome e il cognome del nuovo studente 
         chiamando il costruttore della classe genitore. Se non vengono specificati dei parametri aggiuntivi non è necessario definire il costruttore, 
@@ -568,17 +590,19 @@ Employee.createEmployee('Giovanni', 'Storti'); // Restituisce una nuova istanza 
 Employee.company // Output: "OpenAi"
 
 /* Abstract */
-/*  Definiamo una classe astratta chiamata "Animal"che rappresenta un animale generico.
+/*  
+    Definiamo una classe astratta chiamata "Animal"che rappresenta un animale generico.
     Poiché "Animal" è una classe astratta, essa non può essere istanziata direttamente.
-    Tuttavia, essa può essere estesa da altre classi che ereditano le proprietà e i metodi di "Animal"
-    e possono anche definire le proprie proprietà e metodi.
+    È stata pensata, invece, per essere estesa da altre classi che ereditano le proprietà
+    e i metodi di "Animal" e possono definire le proprie proprietà e metodi.
 */
 abstract class Animal {
 
     // Definiamo un costruttore che accetta un nome per l'animale
     constructor(public name: string) {}
     
-    /*  Definiamo un metodo astratto chiamato "sound()" che rappresenta il suono prodotto dall'animale.
+    /*  
+        Definiamo un metodo astratto chiamato "sound()" che rappresenta il suono prodotto dall'animale.
         I metodi astratti sono solo dichiarati e non implementati, il che significa che devono essere 
         implementati dalle classi figlie. Qualsiasi classe che estende "Animal" deve necessariamente
         fornire una propria implementazione di questo metodo  
@@ -648,3 +672,237 @@ class DatabaseConnection {
 
 // Richiama il metodo statico getInstance() della classe DatabaseConnection per ottenere l'unica istanza della classe e connetterci al database
 DatabaseConnection.getInstance().connect();
+
+/* 
+    Interfaces
+    
+    Le interfacce sono contratti che definiscono un insieme di proprietà e metodi che una classe deve implementare.
+*/
+
+// Definiamo un'interfaccia InternetConnection che descrive le proprietà e i metodi necessari per gestire una connessione a internet e accendimento e spegnimento.
+interface InternetConnection {
+
+    /* 
+        Le interfacce contengono solo dichiarazioni di proprietà e metodi, ma non la loro implementazione. 
+        Pertanto, come accade con le proprietà e i metodi astratti, qualsiasi classe che implementa l'interfaccia 
+        InternetConnection deve fornire la propria implementazione dei metodi e delle proprietà definiti nell'interfaccia.
+    */
+    isConnected: boolean; // Proprietà che rappresenta la connessione a internet
+    connect(): void; // Metodo per connettersi a internet
+    disconnect(): void; // Metodo per disconnettersi da internet
+}
+
+/*  
+    Differenza con custom type
+
+    In TypeScript, possiamo definire un tipo personalizzato per descrivere la forma di un oggetto o di una variabile,
+    simile a come definiamo un'interfaccia.
+
+    La differenza principale tra un'interfaccia e un tipo personalizzato è che l'interfaccia viene utilizzata solo per descrivere 
+    la forma di un oggetto,mentre un tipo personalizzato viene utilizzato per definire un tipo personalizzato e può includere unioni 
+    di tipi, intersezioni di tipi, tipi condizionali e altre funzionalità avanzate.
+
+    Inoltre, un'interfaccia può essere implementata da una classe o da un oggetto, mentre un tipo personalizzato non può essere utilizzato
+    direttamente per implementare una classe o un oggetto.
+
+    Infine, le interfacce possono essere estese da altre interfacce, mentre i tipi personalizzati non possono essere estesi.
+
+    Tuttavia, i tipi personalizzati offrono maggiore flessibilità nella definizione dei tipi personalizzati rispetto alle interfacce,
+    perché consentono di definire unioni di tipi, intersezioni di tipi, tipi condizionali e altre funzionalità avanzate.
+*/
+type CustomInternetConnection = {
+    isConnected: boolean; // Proprietà che rappresenta la connessione a internet
+    connect(): void; // Metodo per connettersi a internet
+    disconnect(): void; // Metodo per disconnettersi da internet
+}
+
+// L'interfaccia PowerState definisce una proprietà per verificare lo stato di accensione del dispositivo.
+interface PowerState {
+    isPoweredOn: () => boolean; // Metodo per verificare se il dispositivo è acceso o spento
+}
+
+// L'interfaccia PowerSwitch definisce un metodo per accendere o spegnere il dispositivo.
+interface PowerSwitch {
+    togglePower(): void; // Metodo per accendere o spegnere il dispositivo
+}
+
+// L'interfaccia PowerControl estende le interfacce PowerState e PowerSwitch,  
+// e definisce i metodi per accendere e spegnere il dispositivo.
+interface PowerControl extends PowerState, PowerSwitch {
+    turnOn(deviceType: string): void; // Metodo per accendere il dispositivo
+    turnOff(deviceType: string): void; // Metodo per spegnere il dispositivo
+}
+
+// Definiamo un'enumerazione PowerStatus per rappresentare lo stato di accensione/spegnimento del dispositivo
+enum PowerStatus {
+    ON,
+    OFF
+}
+
+// Implementiamo le due interfacce in una classe astratta che definisce un dispositivo con funzionalità di connessione a internet.
+abstract class Device implements InternetConnection, PowerControl {
+
+    // La proprietà privata _isConnected viene utilizzata per tenere traccia dello stato di connessione del dispositivo.
+    private _isConnected: boolean = false;
+
+    // La proprietà protetta powerStatus viene utilizzata per tenere traccia dello stato di alimentazione del dispositivo.
+    protected powerStatus: PowerStatus = PowerStatus.OFF;
+
+    // La proprietà astratta deviceType rappresenta il tipo di dispositivo e deve essere implementata in ogni classe derivata di Device.
+    abstract deviceType: string;
+
+    // Definiamo il costruttore della classe con due parametri: "model" e "year".
+    constructor (public model: string, public year: number) {}
+
+    /*
+        Implementazione delle proprietà e i metodi definiti nell'interfaccia InternetConnection:
+        - isConnected: boolean 
+        - connect(): void 
+        - disconnect(): void  
+    */
+
+    // public isConnected: boolean = false;
+
+    /*  
+        Dal momento che i membri di un'interfaccia sono sempre pubblici poiché devono essere accessibili dalle classi 
+        che implementano l'interfaccia, la proprietà isConnected dell'interfaccia InternetConnection è pubblica e non 
+        può avere un diverso livello di accesso. 
+        Per impedire che la proprietà isConnected venga modificata direttamente dall'esterno, 
+        si utilizzano i metodi getter e setter:
+        - la funzione get viene eseguita quando si accede alla proprietà; 
+        - la funzione set viene eseguita quando si cerca di modificare la proprietà. 
+    */
+
+    // Metodo pubblico per leggere la proprietà privata _isConnected
+    public get isConnected(): boolean {
+        return this._isConnected;
+    }
+
+    // Metodo privato per impostare la proprietà privata _isConnected
+    private set isConnected(value: boolean) {
+        this._isConnected = value;
+    }
+
+    // Metodo pubblico per connettere il dispositivo ad internet
+    public connect(): void {
+        console.log("Connecting to the internet...");
+        this.isConnected = true; // Imposta la proprietà privata _isConnected a true, usando il metodo set
+        console.log("Connected to the internet");
+    }
+
+    // Metodo pubblico per disconnettere il dispositivo da internet
+    public disconnect(): void {
+        console.log("Disconnecting from the internet...");
+        this.isConnected = false; // / Imposta la proprietà privata _isConnected a false, usando il metodo set
+        console.log("Disconnected from the internet");
+    }
+     
+    /*  
+        Implementazione delle proprietà e dei metodi definiti nell'interfaccia PowerControl:
+        - togglePower(): void 
+        - isPoweredOn: () => boolean 
+        - turnOn(): void 
+        - turnOff(): void
+    */
+
+    // Il metodo togglePower si occupa di cambiare lo stato di accensione/spengimento del dispositivo
+    // a seconda dello stato attuale memorizzato nella proprietà protetta powerStatus.
+    togglePower(): void {
+        this.powerStatus = this.powerStatus === PowerStatus.ON ? PowerStatus.OFF : PowerStatus.ON;
+    }
+
+    // Il metodo isPoweredOn restituisce un valore booleano che indica se il dispositivo è attualmente acceso o spento.
+    isPoweredOn(): boolean {
+        return this.powerStatus === PowerStatus.ON;
+    }
+
+    /*
+        I metodi turnOn() e turnOff() rappresentano il comportamento di accensione e spegnimento del dispositivo, 
+        che è specifico per ogni implementazione di Device. 
+        L'argomento deviceType viene utilizzato per garantire che ogni classe derivata di Device fornisca un'implementazione specifica dei metodi, 
+        in linea con le specifiche del dispositivo, per garantire un comportamento coerente di accensione e spegnimento.
+    */
+
+    // Implementa il metodo turnOn definito nell'interfaccia PowerControl
+    turnOn(deviceType: string) {
+        if (!this.isPoweredOn()) {
+            this.togglePower();
+        }    
+    }
+
+    // Implementa il metodo turnOff definito nell'interfaccia PowerControl
+    turnOff(deviceType: string) {
+        if (this.isPoweredOn()) {
+            this.togglePower();
+        }        
+    }
+}
+
+// Classe per uno smartphone, estende la classe Device
+class Smartphone extends Device {
+
+    deviceType: string = 'smartphone'
+
+    // Sovrascrive il metodo turnOn implementato nella classe Device
+    turnOn() {
+        if (!this.isPoweredOn()) {
+            console.log(`Accensione del ${this.deviceType}...`); // Modifica: aggiunge un messaggio di log per indicare l'accensione dello smartphone
+            this.togglePower();
+        }    
+    }
+
+    // Sovrascrive il metodo turnOff implementato nella classe Device
+    turnOff() {
+        if (this.isPoweredOn()) {
+            console.log(`Spegnimento del ${this.deviceType}...`); // Modifica: aggiunge un messaggio di log per indicare lo spegnimento dello smartphone
+            this.togglePower();
+        }        
+    }
+}
+
+// Classe per un computer, estende la classe Device
+class Computer extends Device {
+    deviceType: string = 'computer'
+
+    // Sovrascrive il metodo turnOn implementato nella classe Device
+    turnOn() {
+        if (!this.isPoweredOn()) {
+            console.log(`Accensione del ${this.deviceType}...`); // Modifica: aggiunge un messaggio di log per indicare l'accensione del computer
+            this.togglePower();
+        }    
+    }
+
+    // Sovrascrive il metodo turnOff implementato nella classe Device
+    turnOff() {
+        if (this.isPoweredOn()) {
+            console.log(`Spegnimento del ${this.deviceType}...`); // Modifica: aggiunge un messaggio di log per indicare lo spegnimento del computer
+            this.togglePower();
+        }        
+    }
+}
+  
+const mySmartphone = new Smartphone('iPhone 13', 2021); // Crea un'istanza della classe Smartphone
+mySmartphone.turnOn(); // Accende lo smartphone
+mySmartphone.connect(); // Si connette a Internet
+console.log(mySmartphone.isConnected); // Stampa lo stato della connessione
+mySmartphone.disconnect(); // Si disconnette da Internet
+mySmartphone.turnOff(); // Spegne lo smartphone
+
+const myComputer = new Computer('MacBook Pro', 2022); // Crea un'istanza della classe Computer
+myComputer.turnOn(); // Accende il computer
+myComputer.connect(); // Si connette a Internet
+console.log(myComputer.isConnected); // Stampa lo stato della connessione
+myComputer.disconnect(); // Si disconnette da Internet
+myComputer.turnOff(); // Spegne il computer
+  
+
+
+
+
+
+
+
+
+
+
+
