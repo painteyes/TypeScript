@@ -896,13 +896,209 @@ myComputer.disconnect(); // Si disconnette da Internet
 myComputer.turnOff(); // Spegne il computer
   
 
+/**
+ * GENERICS
+ * 
+ * Cosa sono le Generics ? 
+ * Generics built-in
+ * Esempio di utilizzo di Generics
+ * Generic Constraint Extends 
+ * Generic class 
+*/
+
+/*
+    Cosa sono le Generics ? 
+
+    Le Generics sono una tecnica di programmazione che permette di scrivere codice generico e flessibile, 
+    indipendentemente dal tipo di dato con cui si sta lavorando.
+
+    In TypeScript, le Generics vengono definite utilizzando il carattere "<" e ">" e sono applicabili su vari elementi, 
+    come ad esempio funzioni, classi e interfacce. Il vantaggio di utilizzare le Generics sta nel fatto che il tipo di 
+    dato su cui si lavora viene definito in modo dinamico al momento dell'utilizzo, rendendo così il codice più generico 
+    e flessibile.
+*/
+
+/* Generics built-in */
+
+// Definizione di un array di stringhe tipizzato
+const stringsArr: string[] = ['q', 'w', 'e', 'r', 't', 'y'];
+
+// Definizione di un array di numeri tipizzato utilizzando la sintassi delle Generics (built-in in TypeScript)
+const numbersArr: Array<number> = [1, 2, 3, 4];
+
+/* Esempio di utilizzo di Generics */
+
+// Funzione che prende un array di elementi generici e ne restituisce una copia
+function generateArr(items: any[]): any[] {
+    return new Array().concat(items);
+}
+
+// Esempio di utilizzo della funzione con gli array tipizzati sopra
+const arr1 = generateArr(numbersArr);
+const arr2 = generateArr(stringsArr);
+
+// Problema: si può aggiungere un elemento di qualsiasi tipo all'array
+arr1.push('qwerty');
+
+// Soluzione: utilizzo di generics per definire il tipo degli elementi dell'array
+function _generateArr<T>(items: T[]): T[] {
+    return new Array().concat(items);
+}
+
+// Esempio di utilizzo della nuova funzione
+const _arr1 = _generateArr(numbersArr); // il tipo T viene inferito automaticamente
+const _arr2 = _generateArr<string>(stringsArr); // il tipo T viene espresso esplicitamente come string
+
+// Funzione che converte un elemento di tipo T in un nuovo elemento di tipo U
+function mapItem<T, U>(item: T): U {
+    if (typeof item === "number") {
+        // Se l'elemento è di tipo numerico, lo converte in stringa
+        return item.toString() as unknown as U; // il casting a unknown è necessario per evitare un errore di compilazione
+    } else if (typeof item === "string") {
+        // Se l'elemento è di tipo stringa, lo converte in maiuscolo
+        return item.toUpperCase() as unknown as U; // il casting a unknown è necessario per evitare un errore di compilazione
+    } else {
+        // In caso contrario, restituisce l'elemento originale di tipo U
+        return item as unknown as U; // il casting a unknown è necessario per evitare un errore di compilazione
+    }
+}
+
+// Esempio di invocazione di mapItem():
+const numberValue: number = 5;
+const stringValue: string = 'hello';
+
+const mappedNumberValue: string = mapItem<number, string>(numberValue); // mappedNumberValue avrà il valore '5' di tipo stringa
+const mappedStringValue: string = mapItem<string, string>(stringValue); // mappedStringValue avrà il valore 'HELLO' in maiuscolo
+  
+// Funzione che mappa ogni elemento di un array in un nuovo array di tipo U
+function mapArray<T, U>(items: T[]): U[] {
+    
+    const result: U[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const mappedItem = mapItem<T, U>(item); // la funzione mapItem converte ogni elemento nell'array nel tipo U
+        result.push(mappedItem);
+    }
+
+    return result;
+}
+
+// Esempio di invocazione di mapArray():
+const _numbersArr: number[] = [1, 2, 3, 4];
+const _stringsArr: string[] = ['hello', 'world'];
+
+const mappedNumbersArr: string[] = mapArray<number, string>(numbersArr); // mappedNumbersArr avrà i valori '1', '2', '3', '4' di tipo stringa
+const mappedStringsArr: string[] = mapArray<string, string>(stringsArr); // mappedStringsArr avrà i valori 'HELLO', 'WORLD' in maiuscolo
+
+/* Generic Constraint Extends */
+
+// La sintassi <T extends _Person> specifica che il tipo generico T deve estendere _Person, 
+// il che significa che T può essere sostituito solo con un tipo che sia o estenda _Person.
+function filterYoungerThan<T extends _Person>(people: T[], age: number): T[] {
+    return people.filter(person => person.age < age);
+}
+
+// Esempio di utilizzo della funzione filterYoungerThan()
+interface _Person {
+    name: string;
+    age: number;
+}
+ 
+const people: _Person[] = [
+    { name: 'Alice', age: 25 },
+    { name: 'Bob', age: 30 },
+    { name: 'Charlie', age: 20 },
+];
+
+const youngPeople = filterYoungerThan(people, 30); // restituirà solo Alice e Charlie
+  
+console.log(youngPeople);
+// Output: [{ name: "Alice", age: 25 }, { name: "Charlie", age: 20 }]
+
+/*
+    Definiamo una funzione che accetta un array di elementi di tipo number o boolean e restituisce una 
+    funzione che accetta un valore di tipo T (ovvero number o boolean) e restituisce un nuovo array 
+    contenente tutti gli elementi di items che sono uguali al valore passato come parametro.
+*/
+function filterValues<T extends number | boolean>(items: T[]): (value: T) => T[] {
+    return (value: T) => items.filter((item) => item === value);
+}
+
+// Esempio di utilizzo delal funzione
+const myArray = [1, 2, true, false, 3, true];
+const filterForTrue = filterValues(myArray);
+const trueValues = filterForTrue(true);
+console.log(trueValues); // Output: [true, true]
+
+/* 
+    Nota
+
+    In TypeScript, il tipo {} rappresenta un oggetto vuoto senza alcuna proprietà specificata.
+
+    Tuttavia, è stata scelta una convenzione di utilizzo diversa per questo tipo nel contesto delle Generics.
+
+    Nel contesto delle Generics, il tipo {} può essere utilizzato come un tipo "object" generico, 
+    il che significa che può rappresentare qualsiasi tipo di oggetto, con qualsiasi tipo di proprietà, 
+    inclusi gli oggetti che implementano interfacce.
+*/
+
+/**
+ * Cerca e restituisce il primo elemento di tipo T che ha il valore della proprietà specificata uguale a quello dato.
+ * @param items L'array di oggetti di tipo T da cercare.
+ * @param propValue Il valore della proprietà da cercare.
+ * @param propName Il nome della proprietà da cercare.
+ * @returns L'oggetto di tipo T trovato o undefined se non trovato.
+*/
+function findItemByProp<T extends {}, U>(items: T[], propValue: U, propName: keyof T): T | undefined {
+    return items.find((item) => item[propName] === propValue);
+}
+
+// Esempio di utilizzo della funzione findItemByProp()
+interface User {
+    id: number;
+    name: string;
+    age: number;
+}
+  
+const users: User[] = [
+    { id: 1, name: 'Alice', age: 30 },
+    { id: 2, name: 'Bob', age: 25 },
+    { id: 3, name: 'Charlie', age: 40 },
+];
+  
+const userById = findItemByProp(users, 2, 'id');
+const userByName = findItemByProp(users, 'Bob', 'name');
+  
+
+/* Generic class */
 
 
+// Definizione di una classe generica che accetta solo elementi numerici
+class NumericArray<T extends number> {
+    private items: T[];
 
+    constructor(items: T[]) {
+        this.items = items;
+    }
 
+    // Metodo che somma tutti gli elementi dell'array e restituisce il risultato
+    public sum(): number {
+    let total = 0;
+    for (const item of this.items) {
+        total += item;
+    }
+        return total;
+    }
+}
+  
+// Utilizzo della classe NumericArray con elementi numerici
+const numericArray = new NumericArray([1, 2, 3, 4, 5]);
+console.log(numericArray.sum()); // Output: 15
 
+// Utilizzo della classe NumericArray con elementi non numerici (genera un errore di compilazione)
+// const nonNumericArray = new NumericArray([1, 2, 'three', 4, 5]); // Genera un errore di compilazione
 
-
-
-
-
+// Utilizzo della classe NumericArray con elementi decimali (genera un errore di compilazione)
+// const decimalArray = new NumericArray([1, 2, 3.14, 4, 5]); // Genera un errore di compilazione
+  
