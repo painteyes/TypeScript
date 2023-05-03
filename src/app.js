@@ -1,4 +1,3 @@
-"use strict";
 /*
     Differenza tra tipi di dato dinamici e statici
     
@@ -877,33 +876,27 @@ var decimalArray = new NumericArray([1, 2, 3.14, 4, 5]);
 /**
  * DECORATORS
  *
- * Cosa sono i Decorators
- * Creare un Decorator
- * Creare un Decorator Factory
- * Esempio di utilizzo di Decorators con template
+ * Cosa sono i Decorators ?
+ * Crearne uno
+ * Creare un Decorator Factory (passare parametri)
+ * Esempio con template
+ *
 */
 /* Cosa sono i Decorators */
 /*
-    I Decorators sono funzioni che vengono utilizzate per modificare il comportamento di una classe o di una funzione.
-    In pratica, un Decorator è una funzione che prende come input un'altra funzione o una classe e restituisce una nuova
-    funzione o classe con modifiche specifiche.
-
-    Per applicare un Decorator ad una classe o ad una funzione in TypeScript, possiamo utilizzare la sintassi "@"
-    seguita dal nome del Decorator. Ad esempio, il Decorator "@Component" viene utilizzato per decorare una classe
-    come un componente Angular.
+    I Decoratos altro non sono che delle funzioni, dopodichè le applichiamo alle classi semplicemente con la @
 */
-function MyDecorator(target) {
-    console.log("Questa è una funzione decoratore che applichiamo alla classe...");
-    console.log(target);
+function Test(target) {
+    console.log("sto creando un oggetto...");
 }
-var MyTestClass = /** @class */ (function () {
-    function MyTestClass() {
-        console.log("Questa è una classe di prova...");
+var Prova = /** @class */ (function () {
+    function Prova() {
+        console.log("sto creando un oggetto...");
     }
-    MyTestClass = __decorate([
-        MyDecorator
-    ], MyTestClass);
-    return MyTestClass;
+    Prova = __decorate([
+        Test
+    ], Prova);
+    return Prova;
 }());
-// Creiamo un'istanza della classe MyTestClass per vedere come funziona il decorator
-var myTestInstance = new MyTestClass();
+// Creiamo un'istanza della classe Prova per vedere come funziona il decorator
+var provaInstance = new Prova();

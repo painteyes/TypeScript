@@ -1050,9 +1050,9 @@ console.log(trueValues); // Output: [true, true]
  * @param propName Il nome della proprietà da cercare.
  * @returns L'oggetto di tipo T trovato o undefined se non trovato.
 */
-function findItemByProp<T extends {}, U>(items: T[], propValue: U, propName: keyof T): T | undefined {
-    return items.find((item) => item[propName] === propValue);
-}
+// function findItemByProp<T extends {}, U>(items: T[], propValue: U, propName: keyof T): T | undefined {
+//     return items.find((item) => item[propName] === propValue);
+// }
 
 // Esempio di utilizzo della funzione findItemByProp()
 interface User {
@@ -1067,11 +1067,12 @@ const users: User[] = [
     { id: 3, name: 'Charlie', age: 40 },
 ];
   
-const userById = findItemByProp(users, 2, 'id');
-const userByName = findItemByProp(users, 'Bob', 'name');
+// const userById = findItemByProp(users, 2, 'id');
+// const userByName = findItemByProp(users, 'Bob', 'name');
   
 
 /* Generic class */
+
 
 
 // Definizione di una classe generica che accetta solo elementi numerici
@@ -1091,14 +1092,56 @@ class NumericArray<T extends number> {
         return total;
     }
 }
+
   
 // Utilizzo della classe NumericArray con elementi numerici
 const numericArray = new NumericArray([1, 2, 3, 4, 5]);
 console.log(numericArray.sum()); // Output: 15
 
-// Utilizzo della classe NumericArray con elementi non numerici (genera un errore di compilazione)
+// Utilizzo della classe NumericArray con elementi decimali 
+const decimalArray = new NumericArray([1, 2, 3.14, 4, 5]);
+
+// Utilizzo della classe NumericArray con elementi non numerici 
 // const nonNumericArray = new NumericArray([1, 2, 'three', 4, 5]); // Genera un errore di compilazione
 
-// Utilizzo della classe NumericArray con elementi decimali (genera un errore di compilazione)
-// const decimalArray = new NumericArray([1, 2, 3.14, 4, 5]); // Genera un errore di compilazione
-  
+
+// T extends U ? X : Y
+
+/**
+ * DECORATORS
+ * 
+ * Cosa sono i Decorators
+ * Creare un Decorator
+ * Creare un Decorator Factory 
+ * Esempio di utilizzo di Decorators con template
+*/
+
+
+/* Cosa sono i Decorators */
+
+/*
+    I Decorators sono funzioni che vengono utilizzate per modificare il comportamento di una classe o di una funzione. 
+    In pratica, un Decorator è una funzione che prende come input un'altra funzione o una classe e restituisce una nuova 
+    funzione o classe con modifiche specifiche.
+
+    Per applicare un Decorator ad una classe o ad una funzione in TypeScript, possiamo utilizzare la sintassi "@" 
+    seguita dal nome del Decorator. Ad esempio, il Decorator "@Component" viene utilizzato per decorare una classe 
+    come un componente Angular.
+*/
+
+function MyDecorator(target: any) {
+    console.log("Questa è una funzione decoratore che applichiamo alla classe...");
+    console.log(target)
+}
+    
+@MyDecorator
+class MyTestClass {
+    constructor() {
+        console.log("Questa è una classe di prova...");
+    }
+}
+    
+// Creiamo un'istanza della classe MyTestClass per vedere come funziona il decorator
+const myTestInstance = new MyTestClass();
+    
+
