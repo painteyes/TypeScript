@@ -1012,7 +1012,7 @@ const people: _Person[] = [
 ];
 
 const youngPeople = filterYoungerThan(people, 30); // restituirà solo Alice e Charlie
-  
+
 console.log(youngPeople);
 // Output: [{ name: "Alice", age: 25 }, { name: "Charlie", age: 20 }]
 
@@ -1111,37 +1111,383 @@ const decimalArray = new NumericArray([1, 2, 3.14, 4, 5]);
  * DECORATORS
  * 
  * Cosa sono i Decorators
- * Creare un Decorator
- * Creare un Decorator Factory 
+ * Class Decorator
+ * Decorator Factory 
+ * Method Decorator
+ * Property Decorator
  * Esempio di utilizzo di Decorators con template
 */
-
 
 /* Cosa sono i Decorators */
 
 /*
-    I Decorators sono funzioni che vengono utilizzate per modificare il comportamento di una classe o di una funzione. 
-    In pratica, un Decorator è una funzione che prende come input un'altra funzione o una classe e restituisce una nuova 
-    funzione o classe con modifiche specifiche.
+    I decorator sono funzioni speciali che possono essere utilizzate per "decorare" (ovvero, annotare) un elemento del linguaggio 
+    con informazioni aggiuntive. Ad esempio, si può utilizzare un decorator per aggiungere una proprietà a una classe, 
+    per modificare il comportamento di un metodo, o per aggiungere un'etichetta a un parametro.
 
-    Per applicare un Decorator ad una classe o ad una funzione in TypeScript, possiamo utilizzare la sintassi "@" 
-    seguita dal nome del Decorator. Ad esempio, il Decorator "@Component" viene utilizzato per decorare una classe 
-    come un componente Angular.
 */
 
-function MyDecorator(target: any) {
-    console.log("Questa è una funzione decoratore che applichiamo alla classe...");
-    console.log(target)
-}
+
+/* Class Decorator */
+
+//  Definiamo ....
+function MyDecorator(target: any) { 
+    // Il parametro `target` rappresenta la classe stessa (la funzione costruttrice).
+
+    console.log(`Questa è una funzione decoratore applicata alla classe ${target.name}`);
+    console.log(target);
     
+    // Se `target` è di tipo `any`, definendo una proprietà direttamente su `target`, 
+    // si sta effettivamente assegnando una proprietà alla classe stessa, non all'istanza della classe. 
+    // Quindi, questa è simile a una proprietà statica.
+    
+    // Tuttavia, non è consigliato definire una proprietà statica sulla funzione costruttrice in un decoratore,
+    // poiché verrebbe condivisa da tutte le istanze della classe.
+    // Pertanto, si raccomanda di utilizzare `target.prototype` per definire proprietà di istanza nel decoratore.
+
+    // `target.prototype` rappresenta l'oggetto prototipo utilizzato per creare tutte le istanze della classe.
+    // Definendo una proprietà su `target.prototype`, si definisce una proprietà di istanza.
+    
+    // Non consigliato: Definire una proprietà statica direttamente su `target`.
+    target.isStatic = true;
+
+    // Consigliato: Definire proprietà di istanza utilizzando `target.prototype`.
+    target.prototype.property1 = 'new value';
+    target.prototype.property2 =  100;
+    target.prototype.property3 =  false;
+    target.prototype.property4 =  [1, '2', 3];
+    target.prototype.getDescription = function() {
+        return `Questo è un oggetto di tipo ${target.name}`;
+    };
+}
+
+//  Assegniamo ....
 @MyDecorator
-class MyTestClass {
-    constructor() {
-        console.log("Questa è una classe di prova...");
+class MyClass {
+
+    color: string;
+    shape: string;
+
+
+
+    [x: string]: any; // Aggiungere una firma dell'indice 
+    property1?: string;  // Il punto di domanda indica che la proprietà è opzionale.
+    property2!: number;  // Il punto esclamativo indica che la proprietà verrà inizializzata in seguito.
+    property3: boolean | undefined;  // Aggiungendo `undefined`, si indica che la proprietà potrebbe non essere inizializzata.
+    property4: any;  // Con `any`, il compilatore non verifica il tipo e permette qualsiasi valore.
+    getDescription(): any { // Implementare un metodo vuoto che verrà sovrascritto dal decoratore.
+        throw new Error("Method not implemented.");
+    }
+
+
+    constructor(color: string, shape: string) {
+        this.color = color;
+        this.shape = shape;
+    }
+
+}
+const myTestInstance = new MyClass("red", "circle")
+
+
+console.log(myTestInstance.property1); // Output:
+console.log(myTestInstance.property2); // Output:
+console.log(myTestInstance.property3); // Output:
+console.log(myTestInstance.property4); // Output:
+console.log(myTestInstance.getDescription()); // Output:
+
+
+/* Decorator Factory */
+
+// Questa è una factory function che crea un decorator personalizzato.
+// Prende come parametro un messaggio da stampare a console.
+function createMyDecorator(message: string) {
+    // La factory function restituisce una funzione decorator.
+    // Prende come parametro il target della decorazione.
+    // In questo caso, il target è la classe decorata.
+    return function myDecorator(target: any) {
+        // Quando viene applicato il decorator, viene stampato a console il messaggio passato come parametro.
+        console.log(message);
+        // Viene stampato a console il target, che in questo caso è la classe decorata.
+        console.log(target); 
+    };
+}
+  
+// La classi MyTestClass e MyOtherTestClass vengono decorate con il decorator creato dalla factory function.
+@createMyDecorator('Esempio di decoratore personalizzato per MyTestClass')
+class MyTestClass {}
+
+@createMyDecorator('Esempio di decoratore personalizzato per MyOtherTestClass')
+class MyOtherTestClass {}
+
+// Questa è una factory function che ...
+// La funzione Component accetta come argomento un oggetto con una proprietà staticProperty di tipo string
+function Component(options: {staticProperty: string}) {
+    
+    // Il tipo di target è un'intersezione tra Function e typeof TestClass, 
+    // il che significa che target deve essere una funzione e avere le stesse 
+    // proprietà statiche della classe TestClass 
+    return function (target: Function & typeof ExampleClass) {
+        // assegna la proprietà elementId del parametro target al valore di options.id
+        target.staticProperty = options.staticProperty
     }
 }
-    
-// Creiamo un'istanza della classe MyTestClass per vedere come funziona il decorator
-const myTestInstance = new MyTestClass();
-    
+
+@Component({
+    staticProperty: 'Hello World'
+})
+class ExampleClass {
+    static staticProperty: string;
+}
+
+/* Method Decorator */
+
+function MethodTest(
+    target: Object,
+    propertyKey: string,
+    propertyDescriptor: PropertyDescriptor
+) {
+    console.log(target)
+    console.log(propertyKey)
+    propertyDescriptor.value = function (...args: any[]) {
+        return `Hello ${args}`
+    }
+}
+
+class SimpleClass {
+
+    @MethodTest
+    print(text: string='Tsumugi'): string {
+        return text;
+    }
+
+}
+console.log(new SimpleClass().print()) // Output: Tsumugi
+console.log(new SimpleClass().print('Kokorozakura')) // Output: Kokorozakura
+
+
+/* Property Decorator */
+
+function logProperty<T extends { [key: string]: any }>(target: T, key: string) {
+
+    let value = target[key];
+
+    const getter = () => {
+        console.log(`Getting ${key} value: ${value}`);
+        return value;
+    };
+  
+    const setter = (newValue: any) => {
+        console.log(`Setting ${key} value: ${newValue}`);
+        value = newValue;
+    };
+  
+    Object.defineProperty(target, key, {
+        get: getter,
+        set: setter,
+        // enumerable: true,
+        // configurable: true,
+    });
+}
+
+class MyNewClass {
+    @logProperty
+    public myProperty: string = "initialValue";
+}
+  
+const instance = new MyNewClass();
+console.log(instance.myProperty); // Getting myProperty value: "initialValue"
+instance.myProperty = "new value"; // Setting myProperty value: "new value"
+console.log(instance.myProperty); // Getting myProperty value: "new value"
+
+
+
+interface Constructor<T> {
+    new (...args: any[]): T;
+}
+
+function ExtendClass<T extends Constructor<{}>>(target: T) {
+    return class ExtendedClass extends target {
+
+        // Define additional properties and methods for the extended class
+        myNewProperty: string = "This is a new property";
+        myNewMethod() {
+            console.log("This is a new method");
+        }
+    }
+}
+
+@ExtendClass
+class BasicClass {
+    // Define original properties and methods for the class
+    myProperty: string = "This is the original property";
+    myMethod() {
+        console.log("This is the original method");
+    }
+}
+
+const myObject = new BasicClass();
+console.log(myObject.myProperty); // Output: "This is the original property"
+
+
+// ANche in questo caso il compilatore non trova le prop aggiunta  dal decorator dinamicamente, 
+// Per evitare l'uso di 'as any', è possibile estendere la definizione di classe usando un type che include le proprietà aggiunte dal decorator.
+const myExtendedObject = new BasicClass as BasicClass & { myNewProperty: string, myNewMethod: () => void };
+console.log(myExtendedObject.myNewProperty); // Output: "This is a new property"
+myExtendedObject.myNewMethod(); // Output: "This is a new method"
+
+
+
+// Estensione del costruttore originale con ulteriori funzionalità:
+function addLogging(target: any) {
+    const original = target;
+    const newConstructor: any = (...args: any[]) => {
+        console.log(`Creating instance of ${original.name}`);
+        return original.apply(target, args);
+    }
+    newConstructor.prototype = Object.create(original.prototype);
+    return newConstructor;
+}
+  
+@addLogging
+class AwesomeClass {
+    constructor(public x: number, public y: number) {}
+}
+  
+const myInstance = new AwesomeClass(10, 20); // Creazione dell'istanza con logging aggiunto
+  
+
+
+
+ 
+type ConstructorWithGreeting<T = {}> = new (...args: any[]) => T;
+
+function addGreeting<T extends ConstructorWithGreeting>(target: T) {
+    return class extends target {
+        name: string;
+
+        constructor(...args: any[]) {
+            super(...args);
+            this.name = args[0];
+        }
+    };
+}
+
+
+@addGreeting
+class FooBarClass {
+    constructor(name: string) {}
+}
+  
+const foobar = new FooBarClass("John"); // Output: Hello, John!
+
+
+
+function addInstanceProperty(propertyName: string, value: any) {
+    return function(target: Function) {
+        // Aggiunge la proprietà alla classe
+        target.prototype[propertyName] = value;
+    };
+}
+
+
+// Classe decorata con il decorator 'addInstanceProperty'
+@addInstanceProperty("message", "Hello, world!")
+class MyClassWithAddedInstanceProp {
+    /* 
+        L'aggiunta del punto esclamativo alla proprietà indica che la proprietà verrà assegnata a un valore prima di essere utilizzata, 
+        anche se non viene inizializzata all'interno della dichiarazione della proprietà o all'interno del costruttore della classe.
+        Questo permette a TypeScript di non generare errori quando si accede alla proprietà message nelle istanze della classe, 
+        anche se il valore viene assegnato solo tramite un decoratore
+    */
+        message: string = ""; // Inizializzazione della proprietà con un valore predefinito
+    }
+
+
+
+// Crea un'istanza della classe decorata e stampa il valore della proprietà 'message'
+const myNewInstance = new MyClassWithAddedInstanceProp();
+console.log(myNewInstance.message); // Output: "Hello, world!"
+  
+
+
+
+
+function addNewProp(propertyName: string, value: any) {
+    return function(target: any) {
+        Object.defineProperty(target, propertyName, { value: value });
+        const constructor = class extends target {
+            constructor(...args: any[]) {
+                super(...args);
+                target.prototype[propertyName] = value;
+            }
+        };
+        return constructor;
+    };
+}
+
+
+@addNewProp('message', "Hello, world!")
+class MyClassWithConstructor {
+    // message: string = "Hello, world!"; // Questa proprietà viene aggiunta dal costruttore aggiunto dal decorator.
+    constructor() {
+        // Questo costruttore viene sostituito dal costruttore aggiunto dal decorator.
+    }
+}
+
+// Crea un'istanza della classe e stampa il valore della proprietà 'message'.
+const newInstance = new MyClassWithConstructor() as MyClassWithConstructor & {message: string};
+console.log(newInstance.message); // Output: "Hello, world!"
+
+
+
+
+// Questo tipo rappresenta il costruttore di un elemento che ha una proprietà textContent.
+type ElementConstructor = new (textContent: string) => { textContent: string };
+
+/**
+ * Questa funzione restituisce una funzione che aggiunge a un contenitore HTML specificato 
+ * un elemento creato da un costruttore specificato (ad esempio, un oggetto creato da una classe).
+ * @param htmlElemTag - La stringa che rappresenta il tag dell'elemento HTML che contiene il nuovo elemento creato.
+ * @param containerId - L'ID dell'elemento HTML che rappresenta il contenitore in cui verrà aggiunto il nuovo elemento creato.
+ * @param textContent - La stringa di testo che verrà utilizzata come valore per la proprietà textContent del nuovo elemento creato. 
+ * @returns Una funzione che prende come parametro il costruttore del nuovo elemento da creare e aggiungerà l'elemento al contenitore HTML.
+ */
+function createAddElementToContainerFunction(htmlElemTag: string, containerId: string, textContent: string) {
+
+    // La factory restituisce una nuova funzione che accetta il costruttore del nuovo elemento
+    return function addElementToContainer(constructor: ElementConstructor) {
+        // Recupera il contenitore HTML dal suo ID
+        const container = document.getElementById(containerId);
+        if (!container) {
+        // Se il contenitore non viene trovato, lancia un'eccezione
+            throw new Error(`Container element with id '${containerId}' not found.`);
+        }
+        // Crea un nuovo elemento usando il costruttore passato come parametro
+        const element = new constructor(textContent);
+        // Aggiungi l'elemento creato al contenitore HTML
+        container.innerHTML = `<${htmlElemTag}></${htmlElemTag}>`;
+        // Seleziona l'elemento creato all'interno del contenitore HTML e imposta il suo contenuto testuale
+        container.querySelector(`${htmlElemTag}`)!.textContent = element.textContent;
+    }
+}
+  
+// Definisci i parametri per la factory
+const htmlElement = 'h1';
+const containerId = 'container';
+const textContent = 'This is a sample element class...';
+
+// Crea un nuovo elemento utilizzando la factory e il decoratore
+@createAddElementToContainerFunction(htmlElement , containerId, textContent)
+class SampleElement {
+
+    constructor(public textContent: string) {}
+}
+  
+
+
+
+  
+
+
+
 
