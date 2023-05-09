@@ -1110,339 +1110,418 @@ const decimalArray = new NumericArray([1, 2, 3.14, 4, 5]);
 /**
  * DECORATORS
  * 
- * Cosa sono i Decorators
+ * - Cosa sono i Decorators
+ * - Class Decorator
+ * - Decorator Factory 
+ * - Method Decorator
+ * - Property Decorator
+ * - Esempio di utilizzo di Decorators con template
+*/
+
+/**
+ * I Decorator sono funzioni speciali che "decorano" un elemento del linguaggio, annotandolo con informazioni extra.
+ * 
+ * In TypeScript, un decoratore è una sorta di dichiarazione che può essere allegata a dichiarazioni di classe, 
+ * metodi, accessor (getter e setter), proprietà o parametri di metodo. Un decoratore usa la forma @expression, 
+ * dove expression deve essere una funzione che verrà chiamata a runtime con informazioni sulla dichiarazione decorata.
+ * 
+ * Un Decorator può, ad esempio, aggiungere una proprietà a una classe, modificare il comportamento di un metodo, 
+ * o aggiungere un'etichetta a un parametro. 
+ * 
+ * Per i decoratori di classe, il target del decoratore è il costruttore della classe. 
+ * Per i decoratori di metodo o accessor, i target sono il prototipo della classe, il nome del membro e il descrittore di proprietà. 
+ * Per i decoratori di proprietà, i target sono il prototipo della classe e il nome del membro. 
+ * Infine, per i decoratori di parametri, i target sono il prototipo della classe, il nome del membro e l'indice del parametro.
+ * 
+ * Un Decorator in TypeScript è quindi una funzione speciale che può essere allegata a certi tipi di dichiarazioni e che può 
+ * modificare il comportamento o le proprietà di tali dichiarazioni. 
+ * 
+ * Nota: Un decoratore è destinato a estendere o modificare il comportamento di un'entità, come una classe, 
+ * un metodo, una proprietà o un parametro, senza alterarne la struttura fondamentale o la firma originale. 
+ * Se un decoratore altera radicalmente l'entità che sta decorando (ad esempio, cambiando il tipo di ritorno di un metodo, 
+ * i suoi parametri, ecc.), il codice che si basa su quella struttura originale potrebbe smettere di funzionare correttamente.
+*/
+
+/**
  * Class Decorator
- * Decorator Factory 
- * Method Decorator
- * Property Decorator
- * Esempio di utilizzo di Decorators con template
+ *
+ * Questo è un esempio di decoratore di classe.
+ * Il parametro `target` è un riferimento al costruttore della classe su cui il decoratore è applicato.
+ * In altre parole, `target` rappresenta direttamente la classe che viene decorata.
+ * 
+ * Nota: In JavaScript, una classe è essenzialmente una funzione speciale. 
+ * Quando definiamo 'class MyClass {}', in realtà stiamo creando una funzione costruttrice 'MyClass'. 
+ * Quando applichiamo un decoratore a una classe, il costruttore della classe viene passato come argomento alla funzione del decoratore. 
+ * In altre parole, la classe stessa funge da funzione costruttrice.
 */
-
-/* Cosa sono i Decorators */
-
-/*
-    I decorator sono funzioni speciali che possono essere utilizzate per "decorare" (ovvero, annotare) un elemento del linguaggio 
-    con informazioni aggiuntive. Ad esempio, si può utilizzare un decorator per aggiungere una proprietà a una classe, 
-    per modificare il comportamento di un metodo, o per aggiungere un'etichetta a un parametro.
-
-*/
-
-
-/* Class Decorator */
-
-//  Definiamo ....
 function MyDecorator(target: any) { 
-    // Il parametro `target` rappresenta la classe stessa (la funzione costruttrice).
 
-    console.log(`Questa è una funzione decoratore applicata alla classe ${target.name}`);
+    // Stampa un messaggio di log per confermare l'applicazione del decoratore alla classe
+    console.log(`Decoratore applicato alla classe ${target.name}`);
+    
+    // Visualizza l'oggetto target (la classe) nel console log
     console.log(target);
-    
-    // Se `target` è di tipo `any`, definendo una proprietà direttamente su `target`, 
-    // si sta effettivamente assegnando una proprietà alla classe stessa, non all'istanza della classe. 
-    // Quindi, questa è simile a una proprietà statica.
-    
-    // Tuttavia, non è consigliato definire una proprietà statica sulla funzione costruttrice in un decoratore,
-    // poiché verrebbe condivisa da tutte le istanze della classe.
-    // Pertanto, si raccomanda di utilizzare `target.prototype` per definire proprietà di istanza nel decoratore.
 
-    // `target.prototype` rappresenta l'oggetto prototipo utilizzato per creare tutte le istanze della classe.
-    // Definendo una proprietà su `target.prototype`, si definisce una proprietà di istanza.
-    
-    // Non consigliato: Definire una proprietà statica direttamente su `target`.
+    // Assegnando una proprietà direttamente su `target`, si crea una proprietà statica sulla classe stessa, non sull'istanza della classe.
+    // Attenzione: questa pratica non è consigliata poiché la proprietà verrebbe condivisa da tutte le istanze della classe.
     target.isStatic = true;
 
-    // Consigliato: Definire proprietà di istanza utilizzando `target.prototype`.
+    // Consigliato: utilizzare `target.prototype` per definire proprietà di istanza nel decoratore.
+    // `target.prototype` rappresenta l'oggetto prototipo utilizzato per creare tutte le istanze della classe.
+    // Definendo una proprietà su `target.prototype`, si definisce una proprietà di istanza.
     target.prototype.property1 = 'new value';
     target.prototype.property2 =  100;
     target.prototype.property3 =  false;
     target.prototype.property4 =  [1, '2', 3];
+    
+    // Definizione di un metodo attraverso il decoratore
     target.prototype.getDescription = function() {
         return `Questo è un oggetto di tipo ${target.name}`;
     };
 }
 
-//  Assegniamo ....
+// Applichiamo il decoratore MyDecorator alla classe MyClass
 @MyDecorator
 class MyClass {
 
-    color: string;
-    shape: string;
+    /*
+        Quando si utilizzano i decoratori, TypeScript non può inferire automaticamente l'aggiunta di nuove proprietà dal decoratore. 
+        Per garantire la tipizzazione corretta e prevenire errori, è necessario indicare al compilatore l'esistenza di queste nuove proprietà.
+    */
 
+    // Qui ci sono vari modi per definire queste proprietà:
 
-
-    [x: string]: any; // Aggiungere una firma dell'indice 
+    [x: string]: any; // Aggiungere una firma dell'indice per permettere proprietà con nomi di stringa 
     property1?: string;  // Il punto di domanda indica che la proprietà è opzionale.
-    property2!: number;  // Il punto esclamativo indica che la proprietà verrà inizializzata in seguito.
-    property3: boolean | undefined;  // Aggiungendo `undefined`, si indica che la proprietà potrebbe non essere inizializzata.
-    property4: any;  // Con `any`, il compilatore non verifica il tipo e permette qualsiasi valore.
+    property2!: number;  // Il punto esclamativo indica che la proprietà verrà definitivamente inizializzata in futuro.
+    property3: boolean | undefined;  // L'aggiunta di `undefined` indica che la proprietà potrebbe non essere inizializzata.
+    property4: any;  // Con `any`, il compilatore non esegue il controllo del tipo e permette qualsiasi valore.
     getDescription(): any { // Implementare un metodo vuoto che verrà sovrascritto dal decoratore.
         throw new Error("Method not implemented.");
     }
-
-
-    constructor(color: string, shape: string) {
-        this.color = color;
-        this.shape = shape;
-    }
-
 }
-const myTestInstance = new MyClass("red", "circle")
 
+// Creiamo un'istanza della classe MyClass
+const myTestInstance = new MyClass();
 
-console.log(myTestInstance.property1); // Output:
-console.log(myTestInstance.property2); // Output:
-console.log(myTestInstance.property3); // Output:
-console.log(myTestInstance.property4); // Output:
-console.log(myTestInstance.getDescription()); // Output:
-
+// Stampiamo i valori delle proprietà e dei metodi aggiunti dal decoratore
+console.log(myTestInstance.property1); // Output: 'new value'
+console.log(myTestInstance.property2); // Output: 100
+console.log(myTestInstance.property3); // Output: false
+console.log(myTestInstance.property4); // Output: [1, '2', 3]
+console.log(myTestInstance.getDescription()); // Output: 'Questo è un oggetto di tipo MyClass'
 
 /* Decorator Factory */
 
-// Questa è una factory function che crea un decorator personalizzato.
-// Prende come parametro un messaggio da stampare a console.
+// Una "Decorator Factory" è una funzione che ritorna un decoratore.
+// In questo esempio, la factory accetta un parametro 'message' e ritorna un decoratore di classe.
 function createMyDecorator(message: string) {
-    // La factory function restituisce una funzione decorator.
-    // Prende come parametro il target della decorazione.
-    // In questo caso, il target è la classe decorata.
+    // Il decoratore restituito dalla factory prende come parametro il target, che è la classe su cui viene applicato.
     return function myDecorator(target: any) {
-        // Quando viene applicato il decorator, viene stampato a console il messaggio passato come parametro.
+        // Quando il decoratore viene applicato, stampa il messaggio fornito e il costruttore della classe target.
         console.log(message);
-        // Viene stampato a console il target, che in questo caso è la classe decorata.
         console.log(target); 
     };
 }
   
-// La classi MyTestClass e MyOtherTestClass vengono decorate con il decorator creato dalla factory function.
-@createMyDecorator('Esempio di decoratore personalizzato per MyTestClass')
+// Applichiamo i decoratori creati dalla factory function alle classi MyTestClass e MyOtherTestClass.
+@createMyDecorator('Applicazione di un decoratore personalizzato a MyTestClass')
 class MyTestClass {}
 
-@createMyDecorator('Esempio di decoratore personalizzato per MyOtherTestClass')
+@createMyDecorator('Applicazione di un decoratore personalizzato a MyOtherTestClass')
 class MyOtherTestClass {}
 
-// Questa è una factory function che ...
-// La funzione Component accetta come argomento un oggetto con una proprietà staticProperty di tipo string
+// La funzione 'Component' è un'altra "Decorator Factory". Accetta come argomento un oggetto con una proprietà 'staticProperty' di tipo stringa.
 function Component(options: {staticProperty: string}) {
-    
-    // Il tipo di target è un'intersezione tra Function e typeof TestClass, 
-    // il che significa che target deve essere una funzione e avere le stesse 
-    // proprietà statiche della classe TestClass 
+    // La factory restituisce un decoratore di classe che assegna la proprietà statica 'staticProperty' della classe target al valore specificato.
+    // Il tipo di target è un'intersezione tra Function e typeof ExampleClass, 
+    // il che significa che target deve essere una funzione e avere le stesse proprietà statiche della classe ExampleClass 
     return function (target: Function & typeof ExampleClass) {
-        // assegna la proprietà elementId del parametro target al valore di options.id
         target.staticProperty = options.staticProperty
     }
 }
 
+// Applichiamo il decoratore 'Component' alla classe 'ExampleClass', specificando il valore della proprietà statica 'staticProperty'.
 @Component({
-    staticProperty: 'Hello World'
+    staticProperty: 'New Value'
 })
 class ExampleClass {
     static staticProperty: string;
 }
 
+console.log(ExampleClass.staticProperty) // Output: 'New Value'
+
+
 /* Method Decorator */
 
+// Definiamo un decoratore di metodi chiamato 'MethodTest'. 
+// Un decoratore di metodi viene chiamato con tre argomenti: 
+// 1. Il prototype dell'oggetto istanza.
+// 2. Il nome della proprietà del metodo.
+// 3. Un oggetto 'PropertyDescriptor' per la proprietà del metodo.
 function MethodTest(
     target: Object,
     propertyKey: string,
     propertyDescriptor: PropertyDescriptor
 ) {
-    console.log(target)
-    console.log(propertyKey)
+    // All'interno del decoratore, stampiamo il prototype dell'oggetto e il nome della proprietà del metodo.
+    console.log(target);
+    console.log(propertyKey);
+
+    // Poi, sovrascriviamo il valore della proprietà del metodo con una nuova funzione.
+    // Questa funzione prende un numero arbitrario di argomenti e restituisce una stringa.
     propertyDescriptor.value = function (...args: any[]) {
-        return `Hello ${args}`
+        return `Kon'nichiwa ${args}`;
     }
 }
 
+// Definiamo una classe semplice chiamata 'SimpleClass'.
 class SimpleClass {
 
-    @MethodTest
-    print(text: string='Tsumugi'): string {
+    orginalPrint(text: string='Tsumugi'): string {
         return text;
     }
 
+    // Applichiamo il decoratore 'MethodTest' al metodo 'print' della classe.
+    @MethodTest
+    decoratedPrint(text: string='Kokorozakura'): string {
+        return text;
+    }
 }
-console.log(new SimpleClass().print()) // Output: Tsumugi
-console.log(new SimpleClass().print('Kokorozakura')) // Output: Kokorozakura
 
+// Creiamo una nuova istanza di 'SimpleClass' 
+const simpleClassInstance = new SimpleClass();
+
+// Il decoratore non ha modificato il comportamento del metodo.
+console.log(simpleClassInstance.orginalPrint()); // Output: 'Tsumugi'
+
+// Il decoratore ha modificato il comportamento del metodo.
+console.log(new SimpleClass().decoratedPrint()); // Output: 'Kon'nichiwa Kokorozakura'
 
 /* Property Decorator */
 
-function logProperty<T extends { [key: string]: any }>(target: T, key: string) {
+/*
+    Questa è la definizione di un decoratore di proprietà. 
+    L'uso di un decoratore di proprietà permette di intercettare e personalizzare le operazioni di lettura e scrittura di una proprietà.
+    
+    Il decoratore utilizza dei tipi generici per definire i tipi di input. 
+    Il parametro target è un oggetto di qualsiasi tipo, 
+    in cui le chiavi sono un sottoinsieme di keyof T (ovvero una o più chiavi qualsiasi nell'oggetto T), 
+    e i valori possono essere di qualsiasi tipo (any).
+*/
+function logProperty<T extends { [K in keyof T]: any }>(target: T, key: keyof T) {
 
+    // Salviamo il valore originale della proprietà.
     let value = target[key];
 
+    // Definiamo una funzione getter personalizzata.
+    // Questa funzione viene chiamata ogni volta che si accede alla proprietà.
     const getter = () => {
-        console.log(`Getting ${key} value: ${value}`);
+        console.log(`Getting ${String(key)} value: ${value}`); /* 
+            In JavaScript, le proprietà di un oggetto possono essere rappresentate come stringhe o simboli (Symbol), 
+            dove i simboli sono valori unici e immutabili utilizzati come identificatori di proprietà. 
+            La sintassi String(key) serve per evitare che venga emesso errore dal compilatore TypeScript quando si tenta 
+            di concatenare un simbolo con una stringa senza prima convertire esplicitamente il simbolo in una stringa. 
+        */
         return value;
     };
-  
+
+    // Definiamo una funzione setter personalizzata.
+    // Questa funzione viene chiamata ogni volta che si assegna un valore alla proprietà.
     const setter = (newValue: any) => {
-        console.log(`Setting ${key} value: ${newValue}`);
+        console.log(`Setting ${String(key)} value: ${newValue}`);
         value = newValue;
     };
-  
+
+    // Usiamo `Object.defineProperty` per sostituire la proprietà originale con la nostra proprietà personalizzata.
+    // Le proprietà getter e setter vengono definite qui.
     Object.defineProperty(target, key, {
         get: getter,
         set: setter,
         // enumerable: true,
         // configurable: true,
     });
+
 }
 
+// Questa è la definizione di una classe che utilizza il nostro decoratore di proprietà.
 class MyNewClass {
+    // Il decoratore @logProperty è applicato alla proprietà myProperty.
     @logProperty
     public myProperty: string = "initialValue";
+
+}
+    
+// Creiamo un'istanza della nostra classe e accediamo alla proprietà decorata.
+let myNewInstance = new MyNewClass();
+console.log(myNewInstance.myProperty); // Output: Getting myProperty value: "initialValue"
+myNewInstance.myProperty = "new value"; // Output: Setting myProperty value: "new value"
+console.log(myNewInstance.myProperty); // Output: Getting myProperty value: "new value"
+
+
+// Funzione decoratore che estende la classe originale con ulteriori funzionalità di logging.
+function addLogging(target: AwesomeConstructor): AwesomeConstructor {
+    // Ritorna una nuova classe che estende la classe originale.
+    return class extends target {
+        // Sovrascrive il costruttore della classe originale.
+        constructor(...args: any[]) {
+            // Stampa un messaggio di logging prima della creazione dell'istanza.
+            console.log(`Creating instance of ${target.name}`);
+            // Chiama il costruttore della classe originale.
+            super(...args);
+            // Stampa un messaggio di logging dopo la creazione dell'istanza.
+            console.log(`Instance has been successfully created with x = ${this['x']} and y = ${this['y']}`);
+        } 
+    };
+}
+
+// Questo tipo rappresenta il costruttore di una classe AwesomeClass.
+type AwesomeConstructor = new (...args: any[]) => AwesomeClass;
+  
+// Applica il decoratore addLogging alla classe AwesomeClass.
+@addLogging
+class AwesomeClass {
+    // Costruttore della classe AwesomeClass.
+    constructor(public x: number, public y: number) {}
 }
   
-const instance = new MyNewClass();
-console.log(instance.myProperty); // Getting myProperty value: "initialValue"
-instance.myProperty = "new value"; // Setting myProperty value: "new value"
-console.log(instance.myProperty); // Getting myProperty value: "new value"
+// Crea una nuova istanza della classe AwesomeClass, con logging aggiunto grazie al decoratore.
+const myInstance = new AwesomeClass(10, 20);
 
 
+/* 
+    Definizione di una funzione che accetta un parametro target di un tipo generico T. 
+    Il vincolo "T extends Constructor<BasicClass>" si può interpretare in questo modo:
+    Constructor<BasicClass> è un tipo specifico che rappresenta una funzione costruttore per una classe di tipo BasicClass o una sua sottoclasse. 
+    Il costruttore accetta un numero arbitrario di argomenti e restituisce un'istanza di BasicClass (o una sua sottoclasse).
+    Quindi, quando diciamo T extends Constructor<BasicClass>, stiamo dicendo che T può essere qualsiasi tipo che soddisfi il contratto di Constructor<BasicClass>. 
+    In altre parole, T deve essere una funzione costruttore che, quando chiamata con new, restituisce un'istanza di BasicClass o di una classe che estende BasicClass. 
+*/
+function ExtendClass<T extends Constructor<BasicClass>>(target: T): T & Constructor<ComplexClass> {
 
-interface Constructor<T> {
-    new (...args: any[]): T;
-}
+    /*
+        Qui, l'uso di "implements ComplexClass" nella definizione della classe interna è tecnicamente non necessario.
+        Questo perché il tipo della classe restituita è determinato dal tipo assegnato alla funzione (T & Constructor<ComplexClass>),
+        piuttosto che da ciò che la classe stessa implementa. 
 
-function ExtendClass<T extends Constructor<{}>>(target: T) {
-    return class ExtendedClass extends target {
+        Di conseguenza, anche se non utilizzassimo "implements", TypeScript tratterebbe ancora la classe restituita 
+        come se implementasse l'interfaccia ComplexClass, poiché questo è specificato nel tipo di ritorno della funzione.
 
-        // Define additional properties and methods for the extended class
+        In questo contesto, l'utilizzo di "implements" puo tuttavia servire a scopo didattico per evidenziare che 
+        la classe estende effettivamente tutti i membri dell'interfaccia ComplexClass e aderisce alla sua struttura.
+    */
+    return class ExtendedClass extends target implements ComplexClass {
         myNewProperty: string = "This is a new property";
         myNewMethod() {
             console.log("This is a new method");
         }
-    }
+        printOriginalProperty() {
+            // Accede alla proprietà myProperty dell'istanza (this), non della classe
+            console.log(this.myProperty);
+        } 
+        getOriginalMethod() {
+            return this.myMethod
+        }
+    }  
 }
 
+// Questa interfaccia descrive una funzione costruttore generica per una classe.
+// In altre parole, è un tipo che può essere utilizzato per descrivere una funzione che può essere utilizzata per creare nuove istanze di una classe.
+// La funzione costruttore accetta qualsiasi numero di argomenti (...args: any[]) e restituisce un'istanza di un certo tipo T.
+interface Constructor<T> {
+    new (...args: any[]): T;
+}
+
+// Questa interfaccia definisce la struttura di una classe più complessa.
+// La classe, in conformità con questa interfaccia, dovrebbe avere i seguenti membri:
+// 1. 'myNewProperty': una proprietà di tipo stringa.
+// 2. 'myNewMethod()': un metodo senza argomenti che non restituisce alcun valore (void).
+// 3. 'printOriginalProperty()': un altro metodo senza argomenti che non restituisce alcun valore. 
+// 4. 'getOriginalMethod()': un metodo che restituisce un'altra funzione. 
+interface ComplexClass {
+    myNewProperty: string;
+    myNewMethod(): void;
+    printOriginalProperty(): void;
+    getOriginalMethod(): () => void;
+}
+
+// @ExtendClass è un decoratore che estende la classe BasicClass
 @ExtendClass
 class BasicClass {
-    // Define original properties and methods for the class
+    // Definisce proprietà e metodi originali per la classe
     myProperty: string = "This is the original property";
     myMethod() {
         console.log("This is the original method");
     }
 }
 
-const myObject = new BasicClass();
-console.log(myObject.myProperty); // Output: "This is the original property"
-
-
-// ANche in questo caso il compilatore non trova le prop aggiunta  dal decorator dinamicamente, 
-// Per evitare l'uso di 'as any', è possibile estendere la definizione di classe usando un type che include le proprietà aggiunte dal decorator.
-const myExtendedObject = new BasicClass as BasicClass & { myNewProperty: string, myNewMethod: () => void };
-console.log(myExtendedObject.myNewProperty); // Output: "This is a new property"
-myExtendedObject.myNewMethod(); // Output: "This is a new method"
-
-
-
-// Estensione del costruttore originale con ulteriori funzionalità:
-function addLogging(target: any) {
-    const original = target;
-    const newConstructor: any = (...args: any[]) => {
-        console.log(`Creating instance of ${original.name}`);
-        return original.apply(target, args);
-    }
-    newConstructor.prototype = Object.create(original.prototype);
-    return newConstructor;
-}
-  
-@addLogging
-class AwesomeClass {
-    constructor(public x: number, public y: number) {}
-}
-  
-const myInstance = new AwesomeClass(10, 20); // Creazione dell'istanza con logging aggiunto
-  
-
-
-
+let _basicInstance = new BasicClass(); /* 
+// _basicInstance.myNewProperty // Errore: Property 'myNewProperty' does not exist on type 'BasicClass'.
+// _basicInstance.myNewMethod() // Errore: Property 'myNewMethod' does not exist on type 'BasicClass'. 
+// _basicInstance.printOriginalProperty(); // Errore: Property 'printOriginalProperty' does not exist on type 'BasicClass'. 
  
-type ConstructorWithGreeting<T = {}> = new (...args: any[]) => T;
+    Il problema qui è dovuto al fatto che, come al solito, TypeScript non sa che il decoratore @ExtendClass sta effettivamente 
+    aggiungendo delle proprietà e dei metodi aggiuntivi. Questo è un limite dell'attuale sistema di tipi di TypeScript: 
+    i decoratori non possono alterare i tipi delle classi che decorano in modo che TypeScript lo riconosca. 
 
-function addGreeting<T extends ConstructorWithGreeting>(target: T) {
-    return class extends target {
-        name: string;
-
-        constructor(...args: any[]) {
-            super(...args);
-            this.name = args[0];
-        }
-    };
-}
-
-
-@addGreeting
-class FooBarClass {
-    constructor(name: string) {}
-}
-  
-const foobar = new FooBarClass("John"); // Output: Hello, John!
+    Di fronte alla sfida della gestione della tipizzazione in contesti di decoratori, oltre alle tecniche già viste in precedenza 
+    (come l'utilizzo di notazioni con il punto esclamativo, il punto di domanda, l'aggiunta di 'undefined' o di una firma dell'indice),
+    un altro approccio efficace è l'impiego di un'asserzione di tipo. 
+    Questa strategia ci permette di affermare esplicitamente a TypeScript che 'basicInstance' è effettivamente un'istanza della classe estesa. 
+    È un modo per convincere TypeScript che il tipo di ritorno è quello specificato, nonostante il compilatore possa non essere in grado di verificarlo autonomamente.
+*/
+let basicInstance = new BasicClass() as BasicClass & ComplexClass;
+basicInstance.printOriginalProperty(); // Output: "This is the original property"
+basicInstance.getOriginalMethod(); // Output: "This is the original method"
+basicInstance.myNewProperty; // Output: "This is a new property"
+basicInstance.myNewMethod(); // Output: "This is a new method"
 
 
-
-function addInstanceProperty(propertyName: string, value: any) {
-    return function(target: Function) {
-        // Aggiunge la proprietà alla classe
-        target.prototype[propertyName] = value;
-    };
-}
-
-
-// Classe decorata con il decorator 'addInstanceProperty'
-@addInstanceProperty("message", "Hello, world!")
-class MyClassWithAddedInstanceProp {
-    /* 
-        L'aggiunta del punto esclamativo alla proprietà indica che la proprietà verrà assegnata a un valore prima di essere utilizzata, 
-        anche se non viene inizializzata all'interno della dichiarazione della proprietà o all'interno del costruttore della classe.
-        Questo permette a TypeScript di non generare errori quando si accede alla proprietà message nelle istanze della classe, 
-        anche se il valore viene assegnato solo tramite un decoratore
-    */
-        message: string = ""; // Inizializzazione della proprietà con un valore predefinito
-    }
-
-
-
-// Crea un'istanza della classe decorata e stampa il valore della proprietà 'message'
-const myNewInstance = new MyClassWithAddedInstanceProp();
-console.log(myNewInstance.message); // Output: "Hello, world!"
-  
-
-
-
-
-function addNewProp(propertyName: string, value: any) {
-    return function(target: any) {
-        Object.defineProperty(target, propertyName, { value: value });
-        const constructor = class extends target {
+// Questa è una funzione di factory che restituisce un decoratore. Prende due argomenti: il nome della proprietà da aggiungere e il suo valore.
+function addNewProp(propertyName: string, value: string) {
+    // Questa è la funzione del decoratore. Prende come argomento la classe originale da decorare.
+    return function <T extends { new (...args: any[]): MyClassWithConstructor }>(OriginalClass: T) {
+        // Questa è la classe decorata che viene restituita. Estende la classe originale.
+        return class extends OriginalClass {
             constructor(...args: any[]) {
+                // Chiama il costruttore della classe originale.
                 super(...args);
-                target.prototype[propertyName] = value;
+                // Utilizza Object.defineProperty per aggiungere la nuova proprietà all'istanza della classe.
+                Object.defineProperty(this, propertyName, { value: value });
+                // Aggiunge un '!' alla fine del valore utilizzando l'assegnazione diretta.
+                this[propertyName] = value + '!';
             }
         };
-        return constructor;
     };
 }
 
+// Queste sono le variabili che vengono passate al decoratore.
+let propertyName = 'message'
+let propertyValue = "Hello World"
 
-@addNewProp('message', "Hello, world!")
+// Applica il decoratore addNewProp alla classe MyClassWithConstructor.
+@addNewProp(propertyName, propertyValue)
 class MyClassWithConstructor {
-    // message: string = "Hello, world!"; // Questa proprietà viene aggiunta dal costruttore aggiunto dal decorator.
-    constructor() {
-        // Questo costruttore viene sostituito dal costruttore aggiunto dal decorator.
-    }
+    /*
+        In TypeScript, le proprietà calcolate in una dichiarazione di classe devono avere un tipo letterale semplice o un tipo 'unique symbol'.
+        Un tipo letterale rappresenta valori esatti. Ad esempio, il tipo 'message' è un tipo letterale che rappresenta esclusivamente la stringa 'message'.
+        Un 'unique symbol' è un tipo speciale di simbolo che è unico e non può essere assegnato ad un altro simbolo.
+        Questo significa che il nome della proprietà deve essere conosciuto al momento della compilazione.
+        Poiché propertyName è una variabile, il suo valore non è noto fino al momento dell'esecuzione (runtime), 
+        quindi non può essere utilizzato come un nome di proprietà calcolato in una dichiarazione di classe.
+    */
+    // [propertyName]: string // Questo causerà un errore perché propertyName non è un tipo letterale o 'unique symbol'.
+
+    // Questa è una firma dell'indice che indica che questa classe può avere un numero qualsiasi di proprietà con chiavi basate su stringhe e valori di tipo stringa.
+    [key: string]: string; 
+
+    constructor() {}
 }
 
-// Crea un'istanza della classe e stampa il valore della proprietà 'message'.
-const newInstance = new MyClassWithConstructor() as MyClassWithConstructor & {message: string};
-console.log(newInstance.message); // Output: "Hello, world!"
+// Questo crea una nuova istanza della classe decorata e stampa il valore della nuova proprietà.
+const newInstancae = new MyClassWithConstructor();
+console.log(newInstancae['message']); // Output: "Hello, world!"
 
-
-
-
-// Questo tipo rappresenta il costruttore di un elemento che ha una proprietà textContent.
-type ElementConstructor = new (textContent: string) => { textContent: string };
 
 /**
  * Questa funzione restituisce una funzione che aggiunge a un contenitore HTML specificato 
@@ -1451,7 +1530,7 @@ type ElementConstructor = new (textContent: string) => { textContent: string };
  * @param containerId - L'ID dell'elemento HTML che rappresenta il contenitore in cui verrà aggiunto il nuovo elemento creato.
  * @param textContent - La stringa di testo che verrà utilizzata come valore per la proprietà textContent del nuovo elemento creato. 
  * @returns Una funzione che prende come parametro il costruttore del nuovo elemento da creare e aggiungerà l'elemento al contenitore HTML.
- */
+*/
 function createAddElementToContainerFunction(htmlElemTag: string, containerId: string, textContent: string) {
 
     // La factory restituisce una nuova funzione che accetta il costruttore del nuovo elemento
@@ -1470,6 +1549,9 @@ function createAddElementToContainerFunction(htmlElemTag: string, containerId: s
         container.querySelector(`${htmlElemTag}`)!.textContent = element.textContent;
     }
 }
+
+// Questo tipo rappresenta il costruttore di un elemento che ha una proprietà textContent.
+type ElementConstructor = new (textContent: string) => { textContent: string };
   
 // Definisci i parametri per la factory
 const htmlElement = 'h1';
