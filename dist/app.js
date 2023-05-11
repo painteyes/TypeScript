@@ -1,4 +1,3 @@
-"use strict";
 /*
     Differenza tra tipi di dato dinamici e statici
     
@@ -1031,121 +1030,28 @@ __decorate([
     logProperty
 ], MyNewClass.prototype, "myProperty", void 0);
 // Creiamo un'istanza della nostra classe e accediamo alla proprietà decorata.
-let instance = new MyNewClass();
-console.log(instance.myProperty); // Output: Getting myProperty value: "initialValue"
-instance.myProperty = "new value"; // Output: Setting myProperty value: "new value"
-console.log(instance.myProperty); // Output: Getting myProperty value: "new value"
-// Extends target
-// interface Constructor<T> {
-//     new (...args: any[]): T;
-// }
-// function ExtendClass<T extends Constructor<{}>>(target: T) {
-//     return class ExtendedClass extends target {
-//         myNewProperty: string = "This is a new property";
-//         myNewMethod() {
-//             console.log("This is a new method");
-//         }
-//         printOriginalProperty() {
-//             console.log(this.myProperty);
-//         }
-//     }
-// }
-// @ExtendClass
-// class BasicClass {
-//     // Define original properties and methods for the class
-//     myProperty: string = "This is the original property";
-//     myMethod() {
-//         console.log("This is the original method");
-//     }
-// }
-// let instance = new BasicClass();
-// instance.printOriginalProperty(); // This should print "This is the original property"
-/*
-    Una delle sfide nell'aggiungere proprietà dinamiche a una classe in TypeScript è che il compilatore di TypeScript
-    esegue la verifica dei tipi staticamente, e quindi cerca le proprietà solo nelle definizioni di tipo della classe.
-    Se si aggiungono proprietà dinamicamente tramite un decoratore, il compilatore di TypeScript potrebbe non riconoscerle
-    e generare errori di compilazione.
-
-    La soluzione che utilizza la sintassi class ExtendedClass extends target permette di estendere dinamicamente una classe con nuove proprietà e metodi,
-    fornendo una soluzione elegante per questo problema.
-    In questo modo, è possibile definire una nuova classe che estende la classe originale e definisce le nuove proprietà e i nuovi metodi,
-    senza creare problemi con la verifica dei tipi statici del compilatore di TypeScript.
-
-    Nel contesto dei decoratori TypeScript, la sintassi class extends target è utilizzata quando si vuole estendere una classe esistente.
-    Anche la sintassi function(target) viene utilizzata quando si vuole modificare una funzione esistente o aggiungere funzionalità a una funzione esistente,
-    tuttavia la sintassi class extends target è più flessibile e potente della sintassi function(target), è più pulita e leggibile della sintassi function(target), soprattutto quando si tratta di estendere o sovrascrivere i metodi della classe esistente.
-    Inoltre, la sintassi class extends target supporta il concetto di ereditarietà e di gerarchia delle classi.
-*/
-// interface Constructor<T> {
-//     new (...args: any[]): T;
-// }
-// interface ExtendedClass {
-//     myNewProperty: string;
-//     myNewMethod(): void;
-// }
-// function ExtendClass<T extends Constructor<{}>>(target: T): T & Constructor<ExtendedClass> {
-//     return class ExtendedClass extends target {
-//         myNewProperty: string = "This is a new property";
-//         myNewMethod() {
-//             console.log("This is a new method");
-//         }
-//     } as T & Constructor<ExtendedClass>;
-// }
-// @ExtendClass
-// class BasicClass implements ExtendedClass {
-//     // Define original properties and methods for the class
-//     myProperty: string = "This is the original property";
-//     myMethod() {
-//         console.log("This is the original method");
-//     }
-//     // These are needed to satisfy the interface, but will be overwritten by the decorator
-//     myNewProperty!: string;
-//     myNewMethod!: () => void;
-// }
-// const myObject = new BasicClass();
-// console.log(myObject.myProperty); // Output: "This is the original property"
-// console.log(myObject.myNewProperty); // No error, Output: "This is a new property"
-// myObject.myNewMethod(); // No error, Output: "This is a new method"
-// interface Constructor<T> {
-//     new (...args: any[]): T;
-// }
-// function ExtendClass<T extends Constructor<{}>>(target: T) {
-//     return class ExtendedClass extends target {
-//         // Define additional properties and methods for the extended class
-//         myNewProperty: string = "This is a new property";
-//         myNewMethod() {
-//             console.log("This is a new method");
-//         }
-//     }
-// }
-// @ExtendClass
-// class BasicClass {
-//     // Define original properties and methods for the class
-//     myProperty: string = "This is the original property";
-//     myMethod() {
-//         console.log("This is the original method");
-//     }
-// }
-// const myObject = new BasicClass();
-// console.log(myObject.myProperty); // Output: "This is the original property"
-// console.log(myObject.myNewProperty); // Errore: Property 'myNewProperty' does not exist on type 'BasicClass'. 
-// console.log(myObject.myNewMethod);  // Errore: Property 'myNewMethod' does not exist on type 'BasicClass'. 
-// ANche in questo caso il compilatore non trova le prop aggiunta  dal decorator dinamicamente, 
-// Per evitare l'uso di 'as any', è possibile estendere la definizione di classe usando un type che include le proprietà aggiunte dal decorator.
-// const myExtendedObject = new BasicClass as BasicClass & { myNewProperty: string, myNewMethod: () => void };
-// console.log(myExtendedObject.myNewProperty); // Output: "This is a new property"
-// myExtendedObject.myNewMethod(); // Output: "This is a new method"
-// Estensione del costruttore originale con ulteriori funzionalità:
+let myNewInstance = new MyNewClass();
+console.log(myNewInstance.myProperty); // Output: Getting myProperty value: "initialValue"
+myNewInstance.myProperty = "new value"; // Output: Setting myProperty value: "new value"
+console.log(myNewInstance.myProperty); // Output: Getting myProperty value: "new value"
+// Funzione decoratore che estende la classe originale con ulteriori funzionalità di logging.
 function addLogging(target) {
-    const original = target;
-    const newConstructor = (...args) => {
-        console.log(`Creating instance of ${original.name}`);
-        return original.apply(target, args);
+    // Ritorna una nuova classe che estende la classe originale.
+    return class extends target {
+        // Sovrascrive il costruttore della classe originale.
+        constructor(...args) {
+            // Stampa un messaggio di logging prima della creazione dell'istanza.
+            console.log(`Creating instance of ${target.name}`);
+            // Chiama il costruttore della classe originale.
+            super(...args);
+            // Stampa un messaggio di logging dopo la creazione dell'istanza.
+            console.log(`Instance has been successfully created with x = ${this['x']} and y = ${this['y']}`);
+        }
     };
-    newConstructor.prototype = Object.create(original.prototype);
-    return newConstructor;
 }
+// Applica il decoratore addLogging alla classe AwesomeClass.
 let AwesomeClass = class AwesomeClass {
+    // Costruttore della classe AwesomeClass.
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -1154,82 +1060,112 @@ let AwesomeClass = class AwesomeClass {
 AwesomeClass = __decorate([
     addLogging
 ], AwesomeClass);
-const myInstance = new AwesomeClass(10, 20); // Creazione dell'istanza con logging aggiunto
-function addGreeting(target) {
-    return class extends target {
-        constructor(...args) {
-            super(...args);
-            this.name = args[0];
+// Crea una nuova istanza della classe AwesomeClass, con logging aggiunto grazie al decoratore.
+const myInstance = new AwesomeClass(10, 20);
+/*
+    Definizione di una funzione che accetta un parametro target di un tipo generico T.
+    Il vincolo "T extends Constructor<BasicClass>" si può interpretare in questo modo:
+    Constructor<BasicClass> è un tipo specifico che rappresenta una funzione costruttore per una classe di tipo BasicClass o una sua sottoclasse.
+    Il costruttore accetta un numero arbitrario di argomenti e restituisce un'istanza di BasicClass (o una sua sottoclasse).
+    Quindi, quando diciamo T extends Constructor<BasicClass>, stiamo dicendo che T può essere qualsiasi tipo che soddisfi il contratto di Constructor<BasicClass>.
+    In altre parole, T deve essere una funzione costruttore che, quando chiamata con new, restituisce un'istanza di BasicClass o di una classe che estende BasicClass.
+*/
+function ExtendClass(target) {
+    /*
+        Qui, l'uso di "implements ComplexClass" nella definizione della classe interna è tecnicamente non necessario.
+        Questo perché il tipo della classe restituita è determinato dal tipo assegnato alla funzione (T & Constructor<ComplexClass>),
+        piuttosto che da ciò che la classe stessa implementa.
+
+        Di conseguenza, anche se non utilizzassimo "implements", TypeScript tratterebbe ancora la classe restituita
+        come se implementasse l'interfaccia ComplexClass, poiché questo è specificato nel tipo di ritorno della funzione.
+
+        In questo contesto, l'utilizzo di "implements" puo tuttavia servire a scopo didattico per evidenziare che
+        la classe estende effettivamente tutti i membri dell'interfaccia ComplexClass e aderisce alla sua struttura.
+    */
+    return class ExtendedClass extends target {
+        constructor() {
+            super(...arguments);
+            this.myNewProperty = "This is a new property";
+        }
+        myNewMethod() {
+            console.log("This is a new method");
+        }
+        printOriginalProperty() {
+            // Accede alla proprietà myProperty dell'istanza (this), non della classe
+            console.log(this.myProperty);
+        }
+        getOriginalMethod() {
+            return this.myMethod;
         }
     };
 }
-let FooBarClass = class FooBarClass {
-    constructor(name) { }
-};
-FooBarClass = __decorate([
-    addGreeting
-], FooBarClass);
-const foobar = new FooBarClass("John"); // Output: Hello, John!
-function addInstanceProperty(propertyName, value) {
-    return function (target) {
-        // Aggiunge la proprietà alla classe
-        target.prototype[propertyName] = value;
-    };
-}
-// /* 
-//     Quando il decorator @addInstanceProperty("message", "Hello, world!") viene applicato alla classe MyClassWithAddedInstanceProp, 
-//     il decorator viene eseguito durante la definizione della classe, prima che venga creata l'istanza della classe stessa. 
-//     Il decorator addInstanceProperty prende come argomento il nome della proprietà e il valore da assegnare, 
-//     e restituisce una funzione che a sua volta prende come argomento il costruttore della classe.
-//     Quando viene definita la classe MyClassWithAddedInstanceProp, il decorator addInstanceProperty viene invocato e viene passato 
-//     il costruttore della classe come argomento. All'interno della funzione del decorator, 
-//     viene aggiunta una proprietà message al costruttore della classe, che è la funzione costruttrice stessa.
-//     Quando viene creata un'istanza della classe MyClassWithAddedInstanceProp tramite new MyClassWithAddedInstanceProp(), 
-//     il costruttore della classe viene invocato e la proprietà message viene aggiunta all'istanza appena creata, 
-//     con il valore "Hello, world!". 
-// */
-// Classe decorata con il decorator 'addInstanceProperty'
-let MyClassWithAddedInstanceProp = class MyClassWithAddedInstanceProp {
+// @ExtendClass è un decoratore che estende la classe BasicClass
+let BasicClass = class BasicClass {
     constructor() {
-        /*
-            L'aggiunta del punto esclamativo alla proprietà indica che la proprietà verrà assegnata a un valore prima di essere utilizzata,
-            anche se non viene inizializzata all'interno della dichiarazione della proprietà o all'interno del costruttore della classe.
-            Questo permette a TypeScript di non generare errori quando si accede alla proprietà message nelle istanze della classe,
-            anche se il valore viene assegnato solo tramite un decoratore
-        */
-        this.message = ""; // Inizializzazione della proprietà con un valore predefinito
+        // Definisce proprietà e metodi originali per la classe
+        this.myProperty = "This is the original property";
+    }
+    myMethod() {
+        console.log("This is the original method");
     }
 };
-MyClassWithAddedInstanceProp = __decorate([
-    addInstanceProperty("message", "Hello, world!")
-], MyClassWithAddedInstanceProp);
-// Crea un'istanza della classe decorata e stampa il valore della proprietà 'message'
-const myNewInstance = new MyClassWithAddedInstanceProp();
-console.log(myNewInstance.message); // Output: "Hello, world!"
+BasicClass = __decorate([
+    ExtendClass
+], BasicClass);
+let _basicInstance = new BasicClass(); /*
+// _basicInstance.myNewProperty // Errore: Property 'myNewProperty' does not exist on type 'BasicClass'.
+// _basicInstance.myNewMethod() // Errore: Property 'myNewMethod' does not exist on type 'BasicClass'.
+// _basicInstance.printOriginalProperty(); // Errore: Property 'printOriginalProperty' does not exist on type 'BasicClass'.
+ 
+    Il problema qui è dovuto al fatto che, come al solito, TypeScript non sa che il decoratore @ExtendClass sta effettivamente
+    aggiungendo delle proprietà e dei metodi aggiuntivi. Questo è un limite dell'attuale sistema di tipi di TypeScript:
+    i decoratori non possono alterare i tipi delle classi che decorano in modo che TypeScript lo riconosca.
+
+    Di fronte alla sfida della gestione della tipizzazione in contesti di decoratori, oltre alle tecniche già viste in precedenza
+    (come l'utilizzo di notazioni con il punto esclamativo, il punto di domanda, l'aggiunta di 'undefined' o di una firma dell'indice),
+    un altro approccio efficace è l'impiego di un'asserzione di tipo.
+    Questa strategia ci permette di affermare esplicitamente a TypeScript che 'basicInstance' è effettivamente un'istanza della classe estesa.
+    È un modo per convincere TypeScript che il tipo di ritorno è quello specificato, nonostante il compilatore possa non essere in grado di verificarlo autonomamente.
+*/
+let basicInstance = new BasicClass();
+basicInstance.printOriginalProperty(); // Output: "This is the original property"
+basicInstance.getOriginalMethod(); // Output: "This is the original method"
+basicInstance.myNewProperty; // Output: "This is a new property"
+basicInstance.myNewMethod(); // Output: "This is a new method"
+// Questa è una funzione di factory che restituisce un decoratore. Prende due argomenti: il nome della proprietà da aggiungere e il suo valore.
 function addNewProp(propertyName, value) {
-    return function (target) {
-        Object.defineProperty(target, propertyName, { value: value });
-        const constructor = class extends target {
+    // Questa è la funzione del decoratore. Prende come argomento la classe originale da decorare.
+    return function (OriginalClass) {
+        // Questa è la classe decorata che viene restituita. Estende la classe originale.
+        return class extends OriginalClass {
             constructor(...args) {
+                // Chiama il costruttore della classe originale.
                 super(...args);
-                target.prototype[propertyName] = value;
+                // Utilizza Object.defineProperty per aggiungere la nuova proprietà all'istanza della classe.
+                Object.defineProperty(this, propertyName, {
+                    value: value,
+                    writable: true,
+                    configurable: true // Questo permette alla proprietà di essere cancellata o cambiata
+                });
+                // Aggiunge un '!' alla fine del valore utilizzando l'assegnazione diretta.
+                this[propertyName] = value + '!';
             }
         };
-        return constructor;
     };
 }
+// Queste sono le variabili che vengono passate al decoratore.
+let propertyName = 'message';
+let propertyValue = "Hello World";
+// Applica il decoratore addNewProp alla classe MyClassWithConstructor.
 let MyClassWithConstructor = class MyClassWithConstructor {
-    // message: string = "Hello, world!"; // Questa proprietà viene aggiunta dal costruttore aggiunto dal decorator.
-    constructor() {
-        // Questo costruttore viene sostituito dal costruttore aggiunto dal decorator.
-    }
+    constructor() { }
 };
 MyClassWithConstructor = __decorate([
-    addNewProp('message', "Hello, world!")
+    addNewProp(propertyName, propertyValue)
 ], MyClassWithConstructor);
-// Crea un'istanza della classe e stampa il valore della proprietà 'message'.
-const newInstance = new MyClassWithConstructor();
-console.log(newInstance.message); // Output: "Hello, world!"
+// Questo crea una nuova istanza della classe decorata e stampa il valore della nuova proprietà.
+const newInstancae = new MyClassWithConstructor();
+console.log(newInstancae['message']); // Output: "Hello, world!"
 /**
  * Questa funzione restituisce una funzione che aggiunge a un contenitore HTML specificato
  * un elemento creato da un costruttore specificato (ad esempio, un oggetto creato da una classe).
@@ -1237,7 +1173,7 @@ console.log(newInstance.message); // Output: "Hello, world!"
  * @param containerId - L'ID dell'elemento HTML che rappresenta il contenitore in cui verrà aggiunto il nuovo elemento creato.
  * @param textContent - La stringa di testo che verrà utilizzata come valore per la proprietà textContent del nuovo elemento creato.
  * @returns Una funzione che prende come parametro il costruttore del nuovo elemento da creare e aggiungerà l'elemento al contenitore HTML.
- */
+*/
 function createAddElementToContainerFunction(htmlElemTag, containerId, textContent) {
     // La factory restituisce una nuova funzione che accetta il costruttore del nuovo elemento
     return function addElementToContainer(constructor) {
@@ -1268,3 +1204,14 @@ let SampleElement = class SampleElement {
 SampleElement = __decorate([
     createAddElementToContainerFunction(htmlElement, containerId, textContent)
 ], SampleElement);
+/* Import file */
+/*
+    Questo è il file principale della nostra applicazione.
+    Qui, importiamo e utilizziamo le funzioni definite in altri file, come functions.ts.
+*/
+import { multiplication, division } from './functions.js';
+// Utilizzo delle funzioni importate
+let resultMul = multiplication(5, 3);
+let resultDiv = division(10, 7);
+console.log(`Result of multiplication: ${resultMul}`);
+console.log(`Result of division: ${resultDiv}`);

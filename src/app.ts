@@ -1487,7 +1487,11 @@ function addNewProp(propertyName: string, value: string) {
                 // Chiama il costruttore della classe originale.
                 super(...args);
                 // Utilizza Object.defineProperty per aggiungere la nuova proprietà all'istanza della classe.
-                Object.defineProperty(this, propertyName, { value: value });
+                Object.defineProperty(this, propertyName, {
+                    value: value,
+                    writable: true,  // Questo permette alla proprietà di essere sovrascritta
+                    configurable: true  // Questo permette alla proprietà di essere cancellata o cambiata
+                });
                 // Aggiunge un '!' alla fine del valore utilizzando l'assegnazione diretta.
                 this[propertyName] = value + '!';
             }
@@ -1564,11 +1568,23 @@ class SampleElement {
 
     constructor(public textContent: string) {}
 }
-  
 
 
+/* Import file */
+ 
+/*
+    Questo è il file principale della nostra applicazione.
+    Qui, importiamo e utilizziamo le funzioni definite in altri file, come functions.ts.
+*/
 
-  
+import { multiplication, division } from './functions.js';
+
+// Utilizzo delle funzioni importate
+let resultMul = multiplication(5, 3);
+let resultDiv = division(10, 7);
+
+console.log(`Result of multiplication: ${resultMul}`);
+console.log(`Result of division: ${resultDiv}`); 
 
 
 
