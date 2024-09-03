@@ -1,41 +1,72 @@
-/* 
-    Differenza tra tipi di dato dinamici e statici 
-    
-    In TypeScript il tipo delle variabili è statico, a differenza di JavaScript in cui il tipo di dato è dinamico. 
-    Questo significa che in TypeScript il tipo di una variabile viene definito in fase di dichiarazione e 
-    non può essere cambiato successivamente.
-*/
+/**
+ * Differenza tra tipi di dato dinamici e statici
+ * 
+ * In TypeScript il tipo delle variabili è statico, a differenza di JavaScript in cui il tipo di dato è dinamico.
+ * Questo significa che in TypeScript il tipo di una variabile viene definito in fase di dichiarazione e
+ * non può essere cambiato successivamente. Questa caratteristica aiuta a prevenire molti errori comuni
+ * e migliora la manutenibilità del codice.
+ */
 
-// Esempio di assegnamento non valido in TypeScript a causa della tipizzazione statica 
+// Esempio di tipizzazione statica in TypeScript
 let number: number = 5;
-// number = '5'; // Questo assegnamento darebbe un errore a compile time
+// number = '5'; // Errore: Il tipo 'string' non è assegnabile al tipo 'number'.
 
-// Dichiarazione di una funzione in TypeScript
-function sum(a: number, b: number) {
+// Esempio di tipizzazione dinamica in JavaScript (per confronto)
+// let jsNumber = 5;
+// jsNumber = '5'; // Valido in JavaScript, ma non consigliato
+
+/**
+ * Dichiarazione di funzioni in TypeScript
+ * 
+ * In TypeScript, possiamo specificare i tipi dei parametri e il tipo di ritorno delle funzioni.
+ * Questo ci permette di catturare errori di tipo a compile-time invece che a runtime.
+ */
+function sum(a: number, b: number): number {
     return a + b;
 }
 
-// Esempio di utilizzo della funzione sum, con un errore di tipo a compile time
-// console.log(sum(3, '5'));
+// Utilizzo corretto della funzione sum
+console.log(sum(3, 5)); // Output: 8
 
-// Esempio di utilizzo corretto della funzione sum
-console.log(sum(3, 5));
+// Esempio di utilizzo errato della funzione sum (commentato per evitare errori di compilazione)
+// console.log(sum(3, '5')); // Errore: L'argomento di tipo 'string' non è assegnabile al parametro di tipo 'number'.
 
-/*
-    Type assignment e Type inference 
+/**
+ * Type assignment e Type inference
+ * 
+ * In TypeScript, il tipo di una variabile può essere assegnato esplicitamente (type assignment)
+ * o può essere dedotto automaticamente dal compilatore in base al valore iniziale della variabile (type inference).
+ */
 
-    In TypeScript, il tipo di una variabile può essere assegnato esplicitamente o può essere 
-    dedotto automaticamente dal compilatore in base al valore iniziale della variabile.
+// Type assignment: il tipo viene specificato esplicitamente
+let explicitNumber: number = 3;
 
-*/
+// Type inference: il tipo viene dedotto automaticamente
+let inferredNumber = 3; // TypeScript inferisce il tipo 'number'
+let inferredString = "5"; // TypeScript inferisce il tipo 'string'
 
-// In questo caso, il tipo di dato viene inferito automaticamente a number
-let _number = 5
+// Esempio di utilizzo delle variabili con tipi inferiti
+console.log(typeof inferredNumber); // Output: "number"
+console.log(typeof inferredString); // Output: "string"
 
-// In questo caso, il tipo di dato deve essere specificato esplicitamente
-function _sum(a: number, b: number): number {
-    return a + b;
-}
+/**
+ * Esempio di errore di tipo a compile-time
+ * 
+ * TypeScript ci protegge da operazioni non valide tra tipi diversi.
+ */
+// console.log(sum(explicitNumber, inferredString)); // Errore: L'argomento di tipo 'string' non è assegnabile al parametro di tipo 'number'.
+
+/**
+ * Conversione esplicita di tipi (type casting)
+ * 
+ * Quando si è sicuri del tipo di una variabile, si può utilizzare il type casting per "forzare" il tipo.
+ * Attenzione: questo bypassa i controlli di TypeScript e dovrebbe essere usato con cautela.
+ */
+let someValue: unknown = "10";
+let strLength: number = (someValue as string).length;
+
+// Oppure usando la sintassi alternativa:
+let _strLength: number = (<string>someValue).length;
 
 /*
     String

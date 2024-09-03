@@ -1,40 +1,66 @@
-/*
-    Differenza tra tipi di dato dinamici e statici
-    
-    In TypeScript il tipo delle variabili è statico, a differenza di JavaScript in cui il tipo di dato è dinamico.
-    Questo significa che in TypeScript il tipo di una variabile viene definito in fase di dichiarazione e
-    non può essere cambiato successivamente.
-*/
+/**
+ * Differenza tra tipi di dato dinamici e statici
+ *
+ * In TypeScript il tipo delle variabili è statico, a differenza di JavaScript in cui il tipo di dato è dinamico.
+ * Questo significa che in TypeScript il tipo di una variabile viene definito in fase di dichiarazione e
+ * non può essere cambiato successivamente. Questa caratteristica aiuta a prevenire molti errori comuni
+ * e migliora la manutenibilità del codice.
+ */
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-// Esempio di assegnamento non valido in TypeScript a causa della tipizzazione statica 
+// Esempio di tipizzazione statica in TypeScript
 let number = 5;
-// number = '5'; // Questo assegnamento darebbe un errore a compile time
-// Dichiarazione di una funzione in TypeScript
+// number = '5'; // Errore: Il tipo 'string' non è assegnabile al tipo 'number'.
+// Esempio di tipizzazione dinamica in JavaScript (per confronto)
+// let jsNumber = 5;
+// jsNumber = '5'; // Valido in JavaScript, ma non consigliato
+/**
+ * Dichiarazione di funzioni in TypeScript
+ *
+ * In TypeScript, possiamo specificare i tipi dei parametri e il tipo di ritorno delle funzioni.
+ * Questo ci permette di catturare errori di tipo a compile-time invece che a runtime.
+ */
 function sum(a, b) {
     return a + b;
 }
-// Esempio di utilizzo della funzione sum, con un errore di tipo a compile time
-// console.log(sum(3, '5'));
-// Esempio di utilizzo corretto della funzione sum
-console.log(sum(3, 5));
-/*
-    Type assignment e Type inference
-
-    In TypeScript, il tipo di una variabile può essere assegnato esplicitamente o può essere
-    dedotto automaticamente dal compilatore in base al valore iniziale della variabile.
-
-*/
-// In questo caso, il tipo di dato viene inferito automaticamente a number
-let _number = 5;
-// In questo caso, il tipo di dato deve essere specificato esplicitamente
-function _sum(a, b) {
-    return a + b;
-}
+// Utilizzo corretto della funzione sum
+console.log(sum(3, 5)); // Output: 8
+// Esempio di utilizzo errato della funzione sum (commentato per evitare errori di compilazione)
+// console.log(sum(3, '5')); // Errore: L'argomento di tipo 'string' non è assegnabile al parametro di tipo 'number'.
+/**
+ * Type assignment e Type inference
+ *
+ * In TypeScript, il tipo di una variabile può essere assegnato esplicitamente (type assignment)
+ * o può essere dedotto automaticamente dal compilatore in base al valore iniziale della variabile (type inference).
+ */
+// Type assignment: il tipo viene specificato esplicitamente
+let explicitNumber = 3;
+// Type inference: il tipo viene dedotto automaticamente
+let inferredNumber = 3; // TypeScript inferisce il tipo 'number'
+let inferredString = "5"; // TypeScript inferisce il tipo 'string'
+// Esempio di utilizzo delle variabili con tipi inferiti
+console.log(typeof inferredNumber); // Output: "number"
+console.log(typeof inferredString); // Output: "string"
+/**
+ * Esempio di errore di tipo a compile-time
+ *
+ * TypeScript ci protegge da operazioni non valide tra tipi diversi.
+ */
+// console.log(sum(explicitNumber, inferredString)); // Errore: L'argomento di tipo 'string' non è assegnabile al parametro di tipo 'number'.
+/**
+ * Conversione esplicita di tipi (type casting)
+ *
+ * Quando si è sicuri del tipo di una variabile, si può utilizzare il type casting per "forzare" il tipo.
+ * Attenzione: questo bypassa i controlli di TypeScript e dovrebbe essere usato con cautela.
+ */
+let someValue = "10";
+let strLength = someValue.length;
+// Oppure usando la sintassi alternativa:
+let _strLength = someValue.length;
 /*
     String
 */
@@ -1144,7 +1170,7 @@ function addNewProp(propertyName, value) {
                 // Utilizza Object.defineProperty per aggiungere la nuova proprietà all'istanza della classe.
                 Object.defineProperty(this, propertyName, {
                     value: value,
-                    writable: true,
+                    writable: true, // Questo permette alla proprietà di essere sovrascritta
                     configurable: true // Questo permette alla proprietà di essere cancellata o cambiata
                 });
                 // Aggiunge un '!' alla fine del valore utilizzando l'assegnazione diretta.
