@@ -5,7 +5,7 @@
  * Questo significa che in TypeScript il tipo di una variabile viene definito in fase di dichiarazione e
  * non può essere cambiato successivamente. Questa caratteristica aiuta a prevenire molti errori comuni
  * e migliora la manutenibilità del codice.
- */
+*/
 
 // Esempio di tipizzazione statica in TypeScript
 let number: number = 5;
@@ -20,7 +20,7 @@ let number: number = 5;
  * 
  * In TypeScript, possiamo specificare i tipi dei parametri e il tipo di ritorno delle funzioni.
  * Questo ci permette di catturare errori di tipo a compile-time invece che a runtime.
- */
+*/
 function sum(a: number, b: number): number {
     return a + b;
 }
@@ -36,7 +36,7 @@ console.log(sum(3, 5)); // Output: 8
  * 
  * In TypeScript, il tipo di una variabile può essere assegnato esplicitamente (type assignment)
  * o può essere dedotto automaticamente dal compilatore in base al valore iniziale della variabile (type inference).
- */
+*/
 
 // Type assignment: il tipo viene specificato esplicitamente
 let explicitNumber: number = 3;
@@ -53,7 +53,7 @@ console.log(typeof inferredString); // Output: "string"
  * Esempio di errore di tipo a compile-time
  * 
  * TypeScript ci protegge da operazioni non valide tra tipi diversi.
- */
+*/
 // console.log(sum(explicitNumber, inferredString)); // Errore: L'argomento di tipo 'string' non è assegnabile al parametro di tipo 'number'.
 
 /**
@@ -61,12 +61,13 @@ console.log(typeof inferredString); // Output: "string"
  * 
  * Quando si è sicuri del tipo di una variabile, si può utilizzare il type casting per "forzare" il tipo.
  * Attenzione: questo bypassa i controlli di TypeScript e dovrebbe essere usato con cautela.
- */
+*/
 let someValue: unknown = "10";
 let strLength: number = (someValue as string).length;
 
 // Oppure usando la sintassi alternativa:
 let _strLength: number = (<string>someValue).length;
+
 
 /*
     String
@@ -76,6 +77,7 @@ let _name: string = 'Andrea'
 let surname = "Occhipinti"
 let string: string = `My full name is ${_name} ${surname}`
 
+
 /*
     Number
 */
@@ -83,6 +85,7 @@ let string: string = `My full name is ${_name} ${surname}`
 let num1: number = 8
 let num2 = 6
 let __sum = num1 + num2
+
 
 /*
     Boolean
@@ -93,103 +96,369 @@ let _bool = false
 let ___bool: boolean
 ___bool = (bool === _bool) ? true : false
 
-/*
-    Object
+
+/**
+ * Oggetti in TypeScript
+ * 
+ * TypeScript offre diversi modi per definire e tipizzare gli oggetti,
+ * ciascuno con le proprie caratteristiche e casi d'uso.
 */
 
-// Definizione di un oggetto "person1" con due proprietà
+// 1. Oggetto con inferenza di tipo
 const person1 = {
     name: "Pietro",
-    surname: "Rossi"
+    surname: "Rossi",
+    age: 30
+}
+console.log(person1.name); // OK: TypeScript inferisce correttamente il tipo
+// person1.salary = 50000; // Errore: la proprietà 'salary' non esiste nel tipo inferito
+
+/**
+ * 2. Oggetto di tipo generico 'object'
+ * 
+ * Il tipo 'object' rappresenta qualsiasi valore non primitivo.
+ * Questo include oggetti, array e funzioni, ma esclude null e undefined.
+*/
+let objectType: object = { key: "value" };
+objectType = ["array"];
+objectType = function() {};
+// objectType = null; // Errore
+// objectType = undefined; // Errore
+// objectType = 42; // Errore: Type 'number' is not assignable to type 'object'
+
+/**
+ * 3. Oggetto di tipo '{}'
+ * 
+ * Il tipo '{}' rappresenta qualsiasi valore che non sia null o undefined.
+ * Questo include tutti i tipi primitivi (eccetto null e undefined) e tutti i tipi di oggetto.
+*/
+let emptyType: {} = { key: "value" };
+emptyType = ["array"];
+emptyType = function() {};
+emptyType = 42; // OK
+emptyType = "string"; // OK
+emptyType = true; // OK
+// emptyType = null; // Errore
+// emptyType = undefined; // Errore
+
+// Dichiariamo una variabile di tipo '{}'
+let value: {} = "Hello, TypeScript!";
+
+// Questo genera un errore di compilazione
+// console.log(value.length); // Errore: Property 'length' does not exist on type '{}'.
+
+// Questo approccio usa un'asserzione di tipo (as string)
+console.log((value as string).length); // Funziona, ma non è type-safe
+
+// Un approccio più sicuro usando il controllo di tipo
+if (typeof value === "string") {
+    console.log(value.length); // OK
 }
 
-// Non da errore, perché person1 è un oggetto con proprietà "name" e "surname"
-person1.name
+// Esempio con un oggetto
+let obj: {} = { name: "Alice", age: 30 };
 
-/*  
-    Dichiarazione di un oggetto "person2" di tipo generico "object", 
-    il che significa che può contenere qualsiasi tipo di oggetto non primitivo, 
-    inclusi gli array, gli oggetti letterali e gli oggetti istanziati dalle classi. 
-    Tuttavia, in questo caso, non è specificato il tipo di proprietà che l'oggetto dovrebbe avere, 
-    quindi non è possibile accedere alle proprietà dell'oggetto senza specificare il tipo corretto delle proprietà. 
-*/
-let person2: object = {
-    name: "Luca",
-    surname: "Rossi"
+// Questo genera un errore di compilazione
+// console.log(obj.name);
+// Errore: Property 'name' does not exist on type '{}'.
+
+// Questo funziona, ma non è type-safe
+console.log((obj as { name: string }).name);
+
+// Un approccio più sicuro usando il controllo di tipo
+if (typeof obj === "object" && obj !== null && "name" in obj) {
+    console.log((obj as { name: string }).name); // OK
 }
 
-/*  
-    Dichiarazione di un oggetto "person3" di tipo "{}", che in TypeScript rappresenta l'oggetto vuoto. 
-    Questo significa che l'oggetto può contenere qualsiasi tipo di proprietà, 
-    ma non è specificato il tipo di alcuna proprietà dell'oggetto. 
-    Pertanto, non è possibile accedere alle proprietà dell'oggetto senza specificare il tipo corretto delle proprietà. 
-    In pratica, person3 non è molto utile perché non specifica il tipo delle proprietà dell'oggetto.
+/**
+ * Differenze chiave tra 'object' e '{}'
+ * 
+ * 1. 'object' esclude tutti i tipi primitivi (number, string, boolean, null, undefined).
+ * 2. '{}' esclude solo null e undefined, accettando tutti gli altri tipi primitivi.
+ * 3. Entrambi accettano qualsiasi tipo di oggetto (inclusi array e funzioni).
 */
-let person3: {} = {
-    name: "Giovanni",
-    surname: "Rossi"
+
+// Esempio di utilizzo
+function acceptsObject(arg: object) {
+    console.log(arg);
 }
 
-/*  
-    Il tipo di oggetto vuoto "object" o "{}" indica un oggetto senza proprietà definite. 
-    Quando si definisce un oggetto con questo tipo, TypeScript non riconosce alcuna proprietà su di esso. 
-    Ciò significa che l'oggetto potrebbe contenere qualsiasi tipo di valore, 
-    ma TypeScript non avrà alcuna informazione sulle proprietà specifiche dell'oggetto. 
-    Quindi, se si cerca di accedere a una proprietà specifica come "surname" su un oggetto di tipo "{}", 
-    TypeScript restituirà un errore poiché non è in grado di riconoscere quella proprietà. 
-    Per risolvere questo errore, è possibile specificare le proprietà dell'oggetto in fase di dichiarazione 
-    oppure utilizzare un tipo di oggetto più specifico che definisce le proprietà richieste. 
+function acceptsEmptyType(arg: {}) {
+    console.log(arg);
+}
+
+acceptsObject({});     // OK
+acceptsObject([]);     // OK
+// acceptsObject(42);  // Errore
+
+acceptsEmptyType({});  // OK
+acceptsEmptyType([]);  // OK
+acceptsEmptyType(42);  // OK
+
+/**
+ * Nota: Sebbene '{}' accetti tipi primitivi, non permette l'accesso a proprietà specifiche.
+*/
+let someObj: {} = { prop: "value" };
+// console.log(someObj.prop); // Errore: Property 'prop' does not exist on type '{}'
+
+/**
+ * Best Practice:
+ * - Usa 'object' quando vuoi accettare solo oggetti non primitivi.
+ * - Usa '{}' quando vuoi accettare qualsiasi valore tranne null e undefined.
+ * - Per una tipizzazione più precisa, considerare l'uso di interfacce o tipi specifici.
 */
 
-/*  In questo caso, person2 è di tipo "object", che non ha nessuna proprietà specifica definita al suo interno,
-    quindi TypeScript non riconosce la proprietà "name"
-*/
-// person2.name
+/**
+ * 4. Oggetto con tipo esplicito
+ * 
+ * Definisce esattamente quali proprietà l'oggetto deve avere e di che tipo.
+ */
+let person: { 
+    name: string; 
+    surname: string;
+    age: number;
+    email?: string; // Proprietà opzionale
+    readonly id: number; // Proprietà di sola lettura
+} = { 
+    name: "Luca", 
+    surname: "Rossi",
+    age: 35,
+    id: 1
+}
+console.log(person.name); // OK
+person.email = "luca.rossi@example.com"; // OK: proprietà opzionale
+// person.id = 2; // Errore: non possiamo modificare una proprietà readonly
 
-/*  In questo caso, person3 è di tipo "{}", che indica un oggetto vuoto o un oggetto il cui tipo non è specificato
-    quindi TypeScript non riconosce la proprietà "surname"
+/**
+ * 5. Oggetto con proprietà nidificate
+ * 
+ * Possiamo definire oggetti complessi con proprietà annidate.
 */
-// person3.surname
-
-/*  
-    Dichiara una variabile _person di tipo oggetto con due proprietà: name e surname, entrambe di tipo stringa. 
-    Viene poi assegnato un valore all'oggetto utilizzando la sintassi degli oggetti letterali, 
-    Questo tipo di dichiarazione esplicita il tipo delle proprietà dell'oggetto, 
-    in modo da poter accedere alle proprietà in modo sicuro durante la compilazione e prevenire errori a runtime.
-*/
-let person: {name: string, surname: string} = {name: "Luca", surname: "Rossi"}
-
-// Dichiarazione di un oggetto "person" con proprietà nidificate
-let _person: {
-    name: string,
-    surname: string,
-    age: number,
+let complexPerson: {
+    name: string;
+    surname: string;
+    age: number;
     address: {
-        street: string,
-        number: number,
-        cap: string,
-        city: string
+        street: string;
+        number: number;
+        cap: string;
+        city: string;
+    };
+    contacts: {
+        email: string;
+        phone?: string; // Proprietà opzionale
     }
 }
 
-// Assegnazione di un valore all'oggetto "person"
-_person = {
+complexPerson = {
     name: "Paolo",
     surname: "Rossi",
     age: 30,
-    // In questo caso, l'oggetto "address" deve contenere le proprietà "street", "number", "cap" e "city"
     address: {
         street: "Via Cavour",
         number: 87,
         cap: '00100',
         city: 'Rome'
+    },
+    contacts: {
+        email: "paolo.rossi@example.com"
     }
-    // address: { // // Questo da errore perchè mancano le proprietà
-    //     street: "Via Cavour",
-    //     number: 87,
-    // }
-    //address: "Via Cavour 87, 00100, Rome" // Questo da errore perchè il tipo è diverso
 }
+
+/**
+ * Utilizzo di 'typeof' per inferire il tipo
+*/
+function printAddress(person: typeof complexPerson) {
+    console.log(`${person.name} vive in ${person.address.street}, ${person.address.city}`);
+}
+
+printAddress(complexPerson); // OK
+// printAddress(person1); // Errore: struttura non corrispondente
+
+
+/**
+ * Tipizzazione strutturale
+ *
+ * TypeScript usa un sistema di tipizzazione strutturale, dove la compatibilità
+ * tra tipi è basata sulla struttura degli oggetti, non sul loro nome.
+*/
+
+interface Dog {
+    name: string;
+    breed: string;
+}
+
+interface Pet {
+    name: string;
+    breed: string;
+}
+
+let myDog: Dog = { name: "Fido", breed: "Labrador" };
+
+function petInfo(pet: Pet) {
+    console.log(`${pet.name} is a ${pet.breed}`);
+}
+
+petInfo(myDog); // OK: Dog e Pet hanno la stessa struttura
+
+/**
+ * Assegnabilità in TypeScript
+ * 
+ * Principio fondamentale: Un tipo è assegnabile a un altro se contiene
+ * almeno tutte le proprietà richieste dal tipo di destinazione.
+*/
+
+type Minimal = { id: number };
+type Detailed = { id: number; name: string };
+
+let minimal: Minimal = { id: 1 };
+let detailed: Detailed = { id: 2, name: "John" };
+
+minimal = detailed; // OK: Detailed ha tutte le proprietà di Minimal
+// detailed = minimal; // Errore: Minimal non ha tutte le proprietà di Detailed 
+
+/**
+ * Eccesso di proprietà (Excess Property Checking)
+ *
+ * TypeScript applica un controllo più rigoroso quando si assegna un 
+ * oggetto letterale direttamente a un tipo con una forma specifica.
+*/
+
+// Assegnazione diretta: controllo rigoroso
+let validPerson: { name: string } = { name: "Alice" };
+// let invalidPerson: { name: string } = { name: "Bob", age: 30 }; // Errore: 'age' non esiste in { name: string }
+
+// Assegnazione indiretta: più permissiva
+let personObj = { name: "Charlie", age: 40 };
+let typedPerson: { name: string } = personObj; // Questo è permesso
+
+// Le proprietà extra non sono accessibili attraverso il tipo
+console.log(typedPerson.name); // OK
+// console.log(typedPerson.age); // Errore: 'age' non esiste in { name: string }
+
+/**
+ * Spiegazione
+ * 
+ * - Oggetto letterale: Quando assegni direttamente un oggetto letterale, 
+ *      TypeScript esegue una verifica esatta per evitare errori accidentali. 
+ *      Se lasciasse passare proprietà extra, potrebbe portare a bug indesiderati.
+ * 
+ * - Variabile intermedia: Quando assegni una variabile già dichiarata, 
+ *      TypeScript è più flessibile perché suppone che tu abbia già controllato il contenuto dell'oggetto. 
+ *      Non applica una verifica esatta, ma si limita a verificare che l'oggetto abbia almeno le proprietà richieste.
+*/
+
+// Metodi per aggirare il controllo di eccesso di proprietà:
+
+// Asserzione di tipo
+let bypassPerson1: { name: string } = { name: "Charlie", age: 40 } as { name: string };
+// console.log(bypassPerson1.age); // Errore: Property 'age' does not exist on type '{ name: string }'
+
+// Assegnazione indiretta
+let temp = { name: "David", age: 50 };
+let bypassPerson2: { name: string } = temp;
+// console.log(bypassPerson2.age); // Errore: Property 'age' does not exist on type '{ name: string }'
+
+// Indice di firma
+interface FlexiblePerson {
+    name: string;
+    [key: string]: any;
+}
+let flexiblePerson: FlexiblePerson = { name: "Frank", age: 60, job: "Manager" };
+
+// Tipizzazione strutturale e controllo delle proprietà in eccesso negli argomenti delle funzioni
+function printPerson(p: { name: string }) {
+    console.log(p.name);
+    // console.log(p.age); // Errore: 'age' non esiste in Person
+}
+
+let _complexPerson = { name: "Grace", age: 35, skills: ["coding", "design"] };
+printPerson(_complexPerson); // OK, ma 'age' e 'skills' non sono accessibili nella funzione
+
+/**
+ * Utility Types per la manipolazione dei tipi di oggetto
+*/
+
+// Partial<T>: Rende tutte le proprietà opzionali
+type PartialPerson = Partial<typeof person>;
+let partialPerson: PartialPerson = { name: "Marco" }; // OK: tutte le altre proprietà sono opzionali
+
+// Esempio di utilizzo pratico
+function updatePerson(person: typeof complexPerson, updates: Partial<typeof complexPerson>) {
+    return { ...person, ...updates };
+}
+
+const updatedPerson = updatePerson(complexPerson, { age: 31, address: { ...complexPerson.address, number: 88 } });
+console.log(updatedPerson);
+
+// Readonly<T>: Rende tutte le proprietà di sola lettura
+type ReadonlyPerson = Readonly<typeof person>;
+let readonlyPerson: ReadonlyPerson = { ...person };
+// readonlyPerson.name = "Mario"; // Errore: non possiamo modificare una proprietà readonly
+
+// Pick<T, K>: Crea un tipo con solo alcune proprietà di T
+type NameAge = Pick<typeof person, 'name' | 'age'>;
+let nameAge: NameAge = { name: "Luigi", age: 35 };
+
+// Omit<T, K>: Crea un tipo omettendo alcune proprietà di T
+type PersonWithoutId = Omit<typeof person, 'id'>;
+let personWithoutId: PersonWithoutId = { name: "Giulia", surname: "Verdi", age: 28 };
+
+/**
+ * Best Practices
+ * 
+ * 1. Usare tipi espliciti per oggetti complessi o riutilizzabili.
+ * 2. Sfruttare l'inferenza di tipo per oggetti semplici o temporanei.
+ * 3. Utilizzare interfacce per definire contratti di oggetti che possono essere implementati o estesi.
+ * 4. Usare i tipi di utilità per manipolare i tipi esistenti secondo le proprie esigenze.
+ * 5. Ricorda: la tipizzazione strutturale può portare a comportamenti inaspettati, usala con consapevolezza.
+*/
+
+/**
+ *  Esempi di Best Practices
+*/
+
+// a. Uso di interfacce per contratti riutilizzabili
+interface Employee extends Person {
+    employeeId: number;
+}
+
+// b. Utilizzo di tipi per composizioni complesse
+type Manager = Employee & { team: Employee[] };
+
+// c. Uso di generics per flessibilità
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let employeeId = identity<number>(123);
+let employeeName = identity("Alice");
+
+/**
+ * Punti chiave:
+ * 
+ * 1. Tipizzazione Strutturale:
+ *    - Basata sulla struttura degli oggetti, non sui nomi dei tipi.
+ *    - Permette l'assegnazione di oggetti con più proprietà a tipi con meno proprietà.
+ * 
+ * 2. Controllo delle Proprietà in Eccesso:
+ *    - Più rigido con oggetti letterali assegnati direttamente.
+ *    - Più permissivo con assegnazioni da variabili e argomenti di funzioni.
+ * 
+ * 3. Accesso alle Proprietà:
+ *    - Le proprietà extra esistono a runtime.
+ *    - TypeScript impedisce l'accesso statico alle proprietà non dichiarate nel tipo.
+ * 
+ * 4. Assegnabilità:
+ *    - Un tipo è assegnabile se contiene almeno tutte le proprietà richieste dal tipo di destinazione.
+ * 
+ * 5. Flessibilità e Sicurezza:
+ *    - Esistono metodi per aggirare il controllo quando necessario (es. asserzioni di tipo, indici di firma).
+ * 
+ * 6. Best Practices:
+ *    - Uso di interfacce, tipi, generics e utility types per una tipizzazione flessibile e sicura.
+*/
+
 
 /*
     Array
@@ -606,19 +875,19 @@ const _student: Student = new Student('Aldo', 'Baglio', 'Storia');
 
 /* Static */
 // La classe Employee estende la classe Person e aggiunge una proprietà statica "company" e un metodo statico "createEmployee".
-class Employee extends _PersonClass {
+class _Employee extends _PersonClass {
 
     // La proprietà "company" è statica e contiene il nome dell'azienda.
     static company = "OpenAI";
 
-    static createEmployee(name: string, surname: string): Employee {
-        // Il metodo "createEmployee" restituisce una nuova istanza della classe Employee.
-        return new Employee(name, surname);
+    static createEmployee(name: string, surname: string): _Employee {
+        // Il metodo "createEmployee" restituisce una nuova istanza della classe _Employee.
+        return new _Employee(name, surname);
     }
 }
 
-Employee.createEmployee('Giovanni', 'Storti'); // Restituisce una nuova istanza della classe Employee.
-Employee.company // Output: "OpenAi"
+_Employee.createEmployee('Giovanni', 'Storti'); // Restituisce una nuova istanza della classe _Employee.
+_Employee.company // Output: "OpenAi"
 
 /* Abstract */
 /*  
@@ -1616,7 +1885,3 @@ let resultDiv = division(10, 7);
 
 console.log(`Result of multiplication: ${resultMul}`);
 console.log(`Result of division: ${resultDiv}`); 
-
-
-
-
